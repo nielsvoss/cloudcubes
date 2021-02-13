@@ -1,7 +1,7 @@
 import json
 import boto3
 import os
-import datetime
+from datetime import datetime, time
 
 current_time = datetime.now()
 
@@ -52,10 +52,10 @@ def update_server(server):
         return
 
     # Get start and stop time of server
-    start_time_str: str = server['Schedule']['M']['Start-Time']['S']
-    start_time: datetime.time = datetime.strptime(start_time_str, "%H:%M").time()
-    stop_time_str: str = server['Schedule']['M']['Stop-Time']['S']
-    stop_time: datetime.time = datetime.strptime(stop_time_str, "%H:%M").time()
+    start_time_str: str = server['Schedule']['Start-Time']
+    start_time: time = datetime.strptime(start_time_str, "%H:%M").time()
+    stop_time_str: str = server['Schedule']['Stop-Time']
+    stop_time: time = datetime.strptime(stop_time_str, "%H:%M").time()
 
     # Value will be true if the stop time is later in the day than the start time
     # This will help determine if the server should be on if the time of day is between the start and stop times
@@ -65,11 +65,11 @@ def update_server(server):
     should_be_online: bool = None
     if stop_after_start:
         # If current time is between start and stop times
-        should_be_online = (current_time > start_time and current_time < stop_time)
+        should_be_online = (current_time.time() > start_time and current_time.time() < stop_time)
     else:
         # If current time is either after start time or before stop time
         # Since stop time must be before start time, this is the same as checking if the start time is not between stop and start times
-        should_be_online = (current_time > start_time or current_time < stop_time)
+        should_be_online = (current_time.time() > start_time or current_time.time() < stop_time)
 
     # Is server currently online (according to the server state in the database)
     server_online = is_server_online(server)
@@ -90,7 +90,7 @@ def stop_server(server):
 def is_server_online(server):
     if not 'Server_State' in server:
         return False
-    state: str = server['Server_State']['S']
+    state: str = server['Server_State']
     if state in ['SERVER_START_FUNCTION_CALLED', 'SERVER_STARING', 'SERVER_ONLINE']:
         return True
-    assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE']
+    assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not a valid value"
