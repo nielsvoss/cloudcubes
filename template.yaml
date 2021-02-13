@@ -20,17 +20,9 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - AmazonEC2FullAccess
-  ServerDatabase:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: 'Id'
-          AttributeType: 'S'
-      BillingMode: PAY_PER_REQUEST
-      KeySchema:
-        - AttributeName: 'Id'
-          KeyType: 'HASH'
-        
+      Environment:
+        Variables:
+          DATABASE_NAME: minecraft-servers
 
 Outputs:
   SchedulerFunction:
