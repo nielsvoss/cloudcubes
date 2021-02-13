@@ -4,6 +4,8 @@ import os
 from datetime import datetime, time
 
 current_time = datetime.now()
+started = []
+stopped = []
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -32,11 +34,12 @@ def lambda_handler(event, context):
     for server in data:
         update_server(server)
 
+    total_changed = len(started) + len(stopped)
+    result = {"started": started, "stopped": stopped, "changed": total_changed}
+
     return {
         "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-        }),
+        "body": json.dumps(result)
     }
 
 def _get_table():
@@ -81,10 +84,14 @@ def update_server(server):
     
 def start_server(server):
     # TODO: Make call to lambda function
+    id = server['Id']
+    started.append(int(id))
     pass
 
 def stop_server(server):
     # TODO: Make call to lambda function
+    id = server['Id']
+    stopped.append(int(id))
     pass
 
 def is_server_online(server):
