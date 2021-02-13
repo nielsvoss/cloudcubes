@@ -88,5 +88,9 @@ def stop_server(server):
     pass
 
 def is_server_online(server):
-    # TODO: Check state of server and
-    False
+    if not 'Server_State' in server:
+        return False
+    state: str = server['Server_State']['S']
+    if state in ['SERVER_START_FUNCTION_CALLED', 'SERVER_STARING', 'SERVER_ONLINE']:
+        return True
+    assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE']
