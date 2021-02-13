@@ -6,6 +6,7 @@ from datetime import datetime, time
 current_time = datetime.now()
 started = []
 stopped = []
+table = None
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -29,8 +30,8 @@ def lambda_handler(event, context):
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
 
-    table = get_table()
-    data = get_server_data(table)
+    setup_table()
+    data = get_server_data()
     for server in data:
         update_server(server)
 
@@ -42,12 +43,13 @@ def lambda_handler(event, context):
         "body": json.dumps(result)
     }
 
-def get_table():
+def setup_table():
     dynamodb = boto3.resource('dynamodb')
     database_name = os.environ['DATABASE_NAME']
-    return dynamodb.Table(database_name)
+    global table
+    table = dynamodb.Table(database_name)
 
-def get_server_data(table):
+def get_server_data():
     return table.scan(ProjectionExpression='Id,Schedule,Server_State')['Items']
 
 def update_server(server):
