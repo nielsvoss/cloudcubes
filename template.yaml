@@ -23,6 +23,15 @@ Resources:
       Environment:
         Variables:
           DATABASE_NAME: minecraft-servers
+  ServerStarterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: server-starter/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AmazonEC2FullAccess
 
 Outputs:
   SchedulerFunction:
@@ -31,3 +40,9 @@ Outputs:
   SchedulerFunctionIamRole:
     Description: "Implicit IAM Role created for Scheduler function"
     Value: !GetAtt SchedulerFunctionRole.Arn
+  ServerStarterFunction:
+    Description: "Server Starter Function ARN"
+    Value: !GetAtt ServerStarterFunction.Arn
+  ServerStarterFunctionIamRole:
+    Description: "Implicit IAM Role created for Server Starter function"
+    Value: !GetAtt ServerStarterFunctionRole.Arn
