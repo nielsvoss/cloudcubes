@@ -1,4 +1,6 @@
 import json
+import boto3
+import os
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -28,3 +30,8 @@ def lambda_handler(event, context):
             "message": "hello world",
         }),
     }
+
+def _get_table():
+    dynamodb = boto3.resource('dynamodb')
+    database_name = os.environ['DATABASE_NAME']
+    return dynamodb.Table(database_name)
