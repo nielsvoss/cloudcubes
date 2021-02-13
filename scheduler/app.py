@@ -24,6 +24,9 @@ def lambda_handler(event, context):
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
 
+    table = _get_table()
+    data = _get_server_data(table)
+
     return {
         "statusCode": 200,
         "body": json.dumps({
@@ -35,3 +38,6 @@ def _get_table():
     dynamodb = boto3.resource('dynamodb')
     database_name = os.environ['DATABASE_NAME']
     return dynamodb.Table(database_name)
+
+def _get_server_data(table):
+    return table.scan(ProjectionExpression='Id,Schedule,Server_State')['Items']
