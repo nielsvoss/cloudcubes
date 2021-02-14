@@ -6,6 +6,7 @@ from datetime import datetime, time
 current_time = datetime.now()
 started = []
 stopped = []
+database_name: str = None
 table = None
 
 def lambda_handler(event, context):
@@ -44,9 +45,9 @@ def lambda_handler(event, context):
     }
 
 def setup_table():
+    global table, database_name
     dynamodb = boto3.resource('dynamodb')
     database_name = os.environ['DATABASE_NAME']
-    global table
     table = dynamodb.Table(database_name)
 
 def get_server_data():
@@ -87,14 +88,27 @@ def update_server(server):
 def start_server(server):
     # TODO: Make call to lambda function
     id = server['Id']
+    set_server_state(server, 'SERVER_START_FUNCTION_CALLED')
     started.append(int(id))
-    pass
 
 def stop_server(server):
     # TODO: Make call to lambda function
     id = server['Id']
+    set_server_state(server, 'SERVER_SHUTDOWN_FUNCTION_CALLED')
     stopped.append(int(id))
     pass
+
+def set_server_state(server, state: str):
+    table.update_item(
+        TableName=database_name,
+        Key={
+            'Id': server['Id']
+        },
+        UpdateExpression='set Server_State=:u',
+        ExpressionAttributeValues={
+            ':u': state
+        }
+    )
 
 def is_server_online(server):
     if not 'Server_State' in server:
