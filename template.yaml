@@ -20,9 +20,11 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - AmazonEC2FullAccess
+        - AWSLambda_FullAccess
       Environment:
         Variables:
           DATABASE_NAME: minecraft-servers
+          SERVER_STARTER_FUNCTION_ARN: !GetAtt ServerStarterFunction.Arn
   ServerStarterFunction:
     Type: AWS::Serverless::Function
     Properties:

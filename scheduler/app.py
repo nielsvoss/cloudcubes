@@ -8,6 +8,8 @@ started = []
 stopped = []
 database_name: str = None
 table = None
+lambda_client = None
+server_starter_name: str = None
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -31,7 +33,7 @@ def lambda_handler(event, context):
         Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
 
-    setup_table()
+    setup_clients()
     data = get_server_data()
     for server in data:
         update_server(server)
@@ -44,11 +46,14 @@ def lambda_handler(event, context):
         "body": json.dumps(result)
     }
 
-def setup_table():
-    global table, database_name
+def setup_clients():
+    global table, database_name, lambda_client, server_starter_name
     dynamodb = boto3.resource('dynamodb')
     database_name = os.environ['DATABASE_NAME']
     table = dynamodb.Table(database_name)
+    lambda_client = boto3.client('lambda')
+    server_starter_name = os.environ['SERVER_STARTER_FUNCTION_ARN']
+    print(server_starter_name)
 
 def get_server_data():
     return table.scan(ProjectionExpression='Id,Schedule,Server_State')['Items']
@@ -86,9 +91,11 @@ def update_server(server):
         stop_server(server)
     
 def start_server(server):
-    # TODO: Make call to lambda function
     id = server['Id']
-    set_server_state(server, 'SERVER_START_FUNCTION_CALLED')
+    old_state = server['Server_State']
+    set_server_state(server, 'SERVER_STARTER_FUNCTION_CALLED')
+    print(server_starter_name)
+    invoke_lambda('server-starter', int(id), old_state)
     started.append(int(id))
 
 def stop_server(server):
@@ -96,7 +103,6 @@ def stop_server(server):
     id = server['Id']
     set_server_state(server, 'SERVER_SHUTDOWN_FUNCTION_CALLED')
     stopped.append(int(id))
-    pass
 
 def set_server_state(server, state: str):
     table.update_item(
@@ -110,10 +116,22 @@ def set_server_state(server, state: str):
         }
     )
 
+def invoke_lambda(name, id, state):
+    payload = {
+        'Id': id,
+        'Server_State': state,
+        'Source': 'Scheduler-Function'
+    }
+    lambda_client.invoke(
+        FunctionName=server_starter_name,
+        InvocationType='Event',
+        Payload=json.dumps(payload)
+    )
+
 def is_server_online(server):
     if not 'Server_State' in server:
         return False
     state: str = server['Server_State']
-    if state in ['SERVER_START_FUNCTION_CALLED', 'SERVER_STARING', 'SERVER_ONLINE']:
+    if state in ['SERVER_STARTER_FUNCTION_CALLED', 'SERVER_STARING', 'SERVER_ONLINE']:
         return True
     assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not a valid value"
