@@ -1,6 +1,7 @@
 import json
 import boto3
 import os
+import base64
 
 def lambda_handler(event, context):
     id = event['Id']
@@ -16,7 +17,7 @@ def lambda_handler(event, context):
         Key={
             'Id': id
         },
-        ProjectionExpression='EBS, EC2Instance, EC2SpotRequest',
+        ProjectionExpression='EBS, Instance_Type, Key_Name, EC2Instance, EC2SpotRequest',
         ConsistentRead=True
     )['Item']
 
@@ -30,7 +31,35 @@ def lambda_handler(event, context):
         }
     )
 
+    # Read user data from the shell script
+    user_data: str = None
+    with open('startup.sh', 'r') as file:
+        user_data = file.read()
+    encoded_user_data = base64.b64encode(user_data.encode('ascii')).decode('ascii')
+
+    # Request spot instances
+    ec2_client = boto3.client('ec2')
+    amazon_linux_ami = 'ami-01aab85a5e4a5a0fe'
+    response = ec2_client.request_spot_instances(
+        InstanceCount=1,
+        Type='one-time',
+        LaunchSpecification={
+            'ImageId': amazon_linux_ami,
+            'KeyName': data['Key_Name'],
+            'InstanceType': data['Instance_Type'],
+            'Placement': {
+                'AvailabilityZone': 'us-east-2a'
+            },
+            'SecurityGroups': ['Minecraft'],
+            'UserData': encoded_user_data
+        }
+    )
+
     return {
         "statusCode": 200,
-        "body": "hello world"
+        "body": {
+            "response": json.dumps(response),
+            "user-data": user_data,
+            "encoded-user-data": encoded_user_data
+        }
     }
