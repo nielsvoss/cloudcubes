@@ -10,7 +10,6 @@ def lambda_handler(event, context):
     assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not offline"
 
     table = boto3.resource('dynamodb').Table(os.environ['DATABASE_NAME'])
-    print(os.environ['DATABASE_NAME'])
 
     # Get server data
     data = table.get_item(

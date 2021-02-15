@@ -53,7 +53,6 @@ def setup_clients():
     table = dynamodb.Table(database_name)
     lambda_client = boto3.client('lambda')
     server_starter_name = os.environ['SERVER_STARTER_FUNCTION_ARN']
-    print(server_starter_name)
 
 def get_server_data():
     return table.scan(ProjectionExpression='Id,Schedule,Server_State')['Items']
@@ -94,7 +93,6 @@ def start_server(server):
     id = server['Id']
     old_state = server['Server_State']
     set_server_state(server, 'SERVER_STARTER_FUNCTION_CALLED')
-    print(server_starter_name)
     invoke_lambda('server-starter', int(id), old_state)
     started.append(int(id))
 
