@@ -39,6 +39,7 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - AmazonEC2FullAccess
+      Timeout: 20
       Environment:
         Variables:
           DATABASE_NAME: !Ref Database
