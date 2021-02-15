@@ -21,6 +21,16 @@ def lambda_handler(event, context):
         ConsistentRead=True
     )['Item']
 
+    table.update_item(
+        Key={
+            'Id': id
+        },
+        UpdateExpression='set Server_State=:u',
+        ExpressionAttributeValues={
+            ':u': 'SERVER_STARTING'
+        }
+    )
+
     return {
         "statusCode": 200,
         "body": "hello world"
