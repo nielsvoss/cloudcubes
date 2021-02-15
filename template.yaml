@@ -5,6 +5,11 @@ Description: >
 
   Sample SAM Template for cloud-cubes
 
+Parameters:
+  Database:
+    Description: The name of the DynamoDB database where the minecraft server data should be stored
+    Type: 'String'
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -23,7 +28,7 @@ Resources:
         - AWSLambda_FullAccess
       Environment:
         Variables:
-          DATABASE_NAME: minecraft-servers
+          DATABASE_NAME: !Ref Database
           SERVER_STARTER_FUNCTION_ARN: !GetAtt ServerStarterFunction.Arn
   ServerStarterFunction:
     Type: AWS::Serverless::Function
@@ -34,6 +39,9 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - AmazonEC2FullAccess
+      Environment:
+        Variables:
+          DATABASE_NAME: !Ref Database
 
 Outputs:
   SchedulerFunction:

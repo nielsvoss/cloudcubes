@@ -8,3 +8,4 @@ s3_prefix = "cloud-cubes"
 region = "us-east-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Database=\"minecraft-servers\""
