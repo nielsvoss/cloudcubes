@@ -32,9 +32,12 @@ def lambda_handler(event, context):
     )
 
     # Read user data from the shell script
-    user_data: str = None
+    user_data: str = f"""
+    #!/bin/bash
+    export SERVERID={int(id)}
+    """
     with open('startup.sh', 'r') as file:
-        user_data = file.read()
+        user_data += file.read()
     encoded_user_data = base64.b64encode(user_data.encode('ascii')).decode('ascii')
 
     # Request spot instances
