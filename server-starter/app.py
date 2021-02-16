@@ -21,16 +21,6 @@ def lambda_handler(event, context):
         ConsistentRead=True
     )['Item']
 
-    table.update_item(
-        Key={
-            'Id': id
-        },
-        UpdateExpression='set Server_State=:u',
-        ExpressionAttributeValues={
-            ':u': 'SERVER_STARTING'
-        }
-    )
-
     # Read user data from the shell script
     user_data: str = f"""
     #!/bin/bash
@@ -55,6 +45,17 @@ def lambda_handler(event, context):
             },
             'SecurityGroups': ['Minecraft'],
             'UserData': encoded_user_data
+        }
+    )
+
+    table.update_item(
+        Key={
+            'Id': id
+        },
+        UpdateExpression='set Server_State=:u, EC2SpotRequest=:v',
+        ExpressionAttributeValues={
+            ':u': 'SERVER_STARTING',
+            ':v': response['SpotInstanceRequests'][0]['SpotInstanceRequestId']
         }
     )
 
