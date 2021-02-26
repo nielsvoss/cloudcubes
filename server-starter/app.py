@@ -2,15 +2,18 @@ import json
 import boto3
 import os
 import base64
+import re
 
 def lambda_handler(event, context):
     id = event['Id']
     state = event['Server_State']
+    database_name = os.environ['DATABASE_NAME']
+    assert re.match(r'[a-zA-Z-,._+:@%/]*', database_name)
 
     # Make sure server is offline
     assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not offline"
 
-    table = boto3.resource('dynamodb').Table(os.environ['DATABASE_NAME'])
+    table = boto3.resource('dynamodb').Table(database_name)
 
     # Get server data
     data = table.get_item(
@@ -24,6 +27,7 @@ def lambda_handler(event, context):
     # Read user data from the shell script
     user_data: str = f"""
     #!/bin/bash
+    export DATABASENAME={database_name}
     export SERVERID={int(id)}
     """
     with open('startup.sh', 'r') as file:
