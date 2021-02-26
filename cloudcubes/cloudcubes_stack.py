@@ -2,6 +2,7 @@ import aws_cdk.core as cdk
 import aws_cdk.aws_s3 as s3
 import aws_cdk.aws_lambda as lambda_
 import aws_cdk.aws_iam as iam
+import aws_cdk.aws_s3_deployment as s3_deployment
 
 class CloudcubesStack(cdk.Stack):
 
