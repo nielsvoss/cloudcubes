@@ -6,27 +6,20 @@ with open("README.md") as fp:
 
 
 setuptools.setup(
-    name="cloud_cubes",
-    version="0.1.0",
+    name="cloudcubes",
+    version="0.0.1",
 
-    description="Minecraft CloudCubes",
+    description="An empty CDK Python app",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
+    author="author",
+
+    package_dir={"": "cloudcubes"},
+    packages=setuptools.find_packages(where="cloudcubes"),
+
     install_requires=[
-        "aws-cdk.core",
-        "aws-cdk.aws-dynamodb",
-        "aws-cdk.aws-events",
-        "aws-cdk.aws-events-targets",
-        "aws-cdk.aws-lambda",
-        "aws-cdk.aws-s3",
-        "aws-cdk.aws-ec2",
-        "aws-cdk.aws-ecs-patterns",
-        "aws-cdk.aws-certificatemanager",
-        "aws-cdk.aws-apigateway",
-        "aws-cdk.aws-cloudwatch",
-        "cdk-watchful",
-        "boto3"
+        "aws-cdk.core==1.85.0",
     ],
 
     python_requires=">=3.6",
@@ -35,6 +28,8 @@ setuptools.setup(
         "Development Status :: 4 - Beta",
 
         "Intended Audience :: Developers",
+
+        "License :: OSI Approved :: Apache Software License",
 
         "Programming Language :: JavaScript",
         "Programming Language :: Python :: 3 :: Only",
