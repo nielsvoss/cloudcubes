@@ -44,6 +44,17 @@ class CloudcubesStack(cdk.Stack):
         )
         scheduler_function.add_to_role_policy(database_perms)
 
+        # Serverless function for starting server
+        server_starter_function = lambda_.Function(self, "ServerStarterFunction",
+            runtime=lambda_.Runtime.PYTHON_3_8,
+            code=lambda_.Code.from_asset('./server-starter'),
+            handler="app.lambda_handler",
+            environment={
+                "DATABASE_NAME": db_name.value_as_string
+            }
+        )
+        server_starter_function.add_to_role_policy(database_perms)
+
         # S3 bucket to store scripts (used by EC2 instances)
         scripts_bucket = s3.Bucket(self, "ScriptsBucket",
             bucket_name='cloudcubes-scripts-bucket',
