@@ -82,6 +82,14 @@ class CloudcubesStack(cdk.Stack):
                 'ec2:RequestSpotInstances'
             ]
         )
+        pass_server_role_perms = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            resources=[server_role.role_arn],
+            actions=[
+                'iam:GetRole',
+                'iam:PassRole'
+            ]
+        )
 
         # Lambda function for starting servers
         server_starter_function = lambda_.Function(self, "ServerStarterFunction",
@@ -96,3 +104,4 @@ class CloudcubesStack(cdk.Stack):
         )
         server_starter_function.add_to_role_policy(database_perms)
         server_starter_function.add_to_role_policy(start_server_perms)
+        server_starter_function.add_to_role_policy(pass_server_role_perms)
