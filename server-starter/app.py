@@ -8,7 +8,9 @@ def lambda_handler(event, context):
     id = event['Id']
     state = event['Server_State']
     database_name = os.environ['DATABASE_NAME']
-    assert re.match(r'[a-zA-Z-,._+:@%/]*', database_name)
+    scripts_bucket = os.environ['SCRIPTS_BUCKET']
+    assert re.match(r'[a-zA-Z0-9\-,._+:@%/]*', database_name)
+    assert re.match(r'[a-z0-9\-.]', scripts_bucket)
 
     # Make sure server is offline
     assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not offline"
@@ -27,8 +29,9 @@ def lambda_handler(event, context):
     # Read user data from the shell script
     user_data: str = f"""
     #!/bin/bash
-    export DATABASENAME={database_name}
-    export SERVERID={int(id)}
+    export DATABASE_NAME={database_name}
+    export SERVER_ID={int(id)}
+    export SCRIPTS_BUCKET={scripts_bucket}
     """
     with open('startup.sh', 'r') as file:
         user_data += file.read()
