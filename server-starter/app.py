@@ -26,15 +26,22 @@ def lambda_handler(event, context):
         ConsistentRead=True
     )['Item']
 
-    # Read user data from the shell script
-    user_data: str = f"""
+    # Set user data
+    user_data: str = f""" 
     #!/bin/bash
     export DATABASE_NAME={database_name}
     export SERVER_ID={int(id)}
     export SCRIPTS_BUCKET={scripts_bucket}
+
+    cd /home/ec2-user
+    su -c '
+    mkdir server-scripts
+    cd server-scripts
+    aws s3 cp s3://${{SCRIPTS_BUCKET}}/server-startup . -recursive
+    chmod +x startup.sh
+    ./startup.sh
+    ' ec2-user
     """
-    with open('startup.sh', 'r') as file:
-        user_data += file.read()
     encoded_user_data = base64.b64encode(user_data.encode('ascii')).decode('ascii')
 
     # Request spot instances
