@@ -38,7 +38,7 @@ def lambda_handler(event, context):
     su -c '
     mkdir server-scripts
     cd server-scripts
-    aws s3 cp s3://${{SCRIPTS_BUCKET}}/server-startup . -recursive
+    aws s3 cp s3://${{SCRIPTS_BUCKET}}/server-startup . --recursive
     chmod +x startup.sh
     ./startup.sh
     ' ec2-user
