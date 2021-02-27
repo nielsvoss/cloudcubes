@@ -55,6 +55,31 @@ class CloudcubesStack(cdk.Stack):
             sources=[s3_deployment.Source.asset('./scripts')]
         )
 
+        # Permissions to read scripts bucket
+        scripts_bucket_perms = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            resources=[scripts_bucket.bucket_arn],
+            actions=[
+                's3:GetObject'
+            ]
+        )
+
+        # Role to be assigned to launched EC2 instances
+        server_role = iam.Role(self, "Role",
+            assumed_by=iam.ServicePrincipal('ec2.amazonaws.com')
+        )
+        server_role.add_to_policy(database_perms)
+        server_role.add_to_policy(scripts_bucket_perms)
+
+        # Permissions to start servers
+        start_server_perms = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            resources=['*'],
+            actions=[
+                'ec2:RequestSpotInstances'
+            ]
+        )
+
         # Lambda function for starting servers
         server_starter_function = lambda_.Function(self, "ServerStarterFunction",
             runtime=lambda_.Runtime.PYTHON_3_8,
@@ -66,3 +91,4 @@ class CloudcubesStack(cdk.Stack):
             }
         )
         server_starter_function.add_to_role_policy(database_perms)
+        server_starter_function.add_to_role_policy(start_server_perms)
