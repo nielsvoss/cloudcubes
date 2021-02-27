@@ -64,12 +64,15 @@ class CloudcubesStack(cdk.Stack):
             ]
         )
 
-        # Role to be assigned to launched EC2 instances
+        # Role and InstanceProfile to be assigned to launched EC2 instances
         server_role = iam.Role(self, "Role",
             assumed_by=iam.ServicePrincipal('ec2.amazonaws.com')
         )
         server_role.add_to_policy(database_perms)
         server_role.add_to_policy(scripts_bucket_perms)
+        server_instance_profile = iam.CfnInstanceProfile(self, "ServerInstanceProfile",
+            roles=[server_role.role_name]
+        )
 
         # Permissions to start servers
         start_server_perms = iam.PolicyStatement(
@@ -87,7 +90,8 @@ class CloudcubesStack(cdk.Stack):
             handler="app.lambda_handler",
             environment={
                 "DATABASE_NAME": db_name.value_as_string,
-                "SCRIPTS_BUCKET": scripts_bucket.bucket_name
+                "SCRIPTS_BUCKET": scripts_bucket.bucket_name,
+                "SERVER_INSTANCE_PROFILE": server_instance_profile.attr_arn
             }
         )
         server_starter_function.add_to_role_policy(database_perms)

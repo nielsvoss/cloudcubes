@@ -9,6 +9,7 @@ def lambda_handler(event, context):
     state = event['Server_State']
     database_name = os.environ['DATABASE_NAME']
     scripts_bucket = os.environ['SCRIPTS_BUCKET']
+    server_instance_profile = os.environ['SERVER_INSTANCE_PROFILE']
     assert re.match(r'[a-zA-Z0-9\-,._+:@%/]*', database_name)
     assert re.match(r'[a-z0-9\-.]', scripts_bucket)
 
@@ -58,6 +59,9 @@ def lambda_handler(event, context):
                 'AvailabilityZone': 'us-east-2a'
             },
             'SecurityGroups': ['Minecraft'],
+            'IamInstanceProfile': {
+                'Arn': server_instance_profile
+            },
             'UserData': encoded_user_data
         }
     )
