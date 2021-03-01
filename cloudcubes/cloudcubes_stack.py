@@ -58,8 +58,9 @@ class CloudcubesStack(cdk.Stack):
         # Permissions to read scripts bucket
         scripts_bucket_perms = iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
-            resources=[scripts_bucket.bucket_arn],
+            resources=[scripts_bucket.bucket_arn, f'{scripts_bucket.bucket_arn}/*'],
             actions=[
+                's3:ListBucket',
                 's3:GetObject'
             ]
         )
