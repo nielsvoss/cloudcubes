@@ -1,0 +1,2 @@
+# Set line endings for Unix scripts to LF (to prevent them from being saved in CRLF)
+*.sh text eol=lf
