@@ -9,12 +9,12 @@ database_name = os.environ['DATABASE_NAME']
 table = boto3.resource('dynamodb', region_name=ec2_zone[:-1]).Table(database_name)
 
 table.update_item(
-        Key={
-            'Id': id
-        },
-        UpdateExpression='set Server_State=:u, EC2InstanceId=:v',
-        ExpressionAttributeValues={
-            ':u': 'SERVER_STARTED',
-            ':v': ec2_id
-        }
-    )
+    Key={
+        'Id': id
+    },
+    UpdateExpression='set Server_State=:u, EC2InstanceId=:v',
+    ExpressionAttributeValues={
+        ':u': 'SERVER_STARTED',
+        ':v': ec2_id
+    }
+)
