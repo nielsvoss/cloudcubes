@@ -13,6 +13,22 @@ python3 -m pip install --user -r requirements.txt
 # Run update database script
 python3 update_db.py
 
+# Mount volume
+python3 attach_volume.py
+sleep 10
+# Run sudo mkfs.ext4 /dev/sdf before first use
+mkdir -m 000 /home/ec2-user/server
+sudo mount /dev/sdf /home/ec2-user/server
+
 # Install java
 sudo amazon-linux-extras enable corretto8
 sudo yum -y install java-1.8.0-amazon-corretto
+
+# Run server in mounted volume
+cd /home/ec2-user/server
+if [test -f 'prepare.sh']; then
+    chmod +x prepare.sh
+    ./prepare.sh
+fi
+chmod +x start.sh
+./start.sh
