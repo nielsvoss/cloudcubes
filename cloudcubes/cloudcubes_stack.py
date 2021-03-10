@@ -80,10 +80,11 @@ class CloudcubesStack(cdk.Stack):
         server_role.add_to_policy(database_perms)
         server_role.add_to_policy(scripts_bucket_perms)
         server_role.add_to_policy(attach_volumes_perms)
+        server_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name('AmazonSSMManagedInstanceCore'))
         server_instance_profile = iam.CfnInstanceProfile(self, "ServerInstanceProfile",
             roles=[server_role.role_name]
         )
-
+        
         # Permissions to start servers
         start_server_perms = iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
@@ -130,11 +131,10 @@ class CloudcubesStack(cdk.Stack):
         run_command_perms = iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
             resources=[
-                'arm:aws:ec2:*:*:instance/*',
-                'arn:aws:ssm:*:*:document/AWS-RunShellScript'
+                '*'
             ],
             actions=[
-                'ssm:SendCommand'
+                '*'
             ]
         )
 
