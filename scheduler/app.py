@@ -130,6 +130,6 @@ def is_server_online(server):
     if not 'Server_State' in server:
         return False
     state: str = server['Server_State']
-    if state in ['SERVER_STARTER_FUNCTION_CALLED', 'SERVER_STARTING', 'SERVER_ONLINE']:
+    if state in ['SERVER_STARTER_FUNCTION_CALLED', 'SERVER_STARTING', 'SERVER_STARTED']:
         return True
-    assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not a valid value"
+    assert state in ['SERVER_OFFLINE', ''], f"Server state {state} is not a valid value"
