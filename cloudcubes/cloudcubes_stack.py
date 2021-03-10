@@ -115,3 +115,38 @@ class CloudcubesStack(cdk.Stack):
         server_starter_function.add_to_role_policy(database_perms)
         server_starter_function.add_to_role_policy(start_server_perms)
         server_starter_function.add_to_role_policy(pass_server_role_perms)
+
+        list_ssm_actions_perms = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            resources=['*'],
+            actions=[
+                'ssm:ListDocuments',
+                "ssm:DescribeDocument",
+                "ssm:GetDocument",
+                "ssm:DescribeInstance*"
+            ]
+        )
+        
+        run_command_perms = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            resources=[
+                'arm:aws:ec2:*:*:instance/*',
+                'arn:aws:ssm:*:*:document/AWS-RunShellScript'
+            ],
+            actions=[
+                'ssm:SendCommand'
+            ]
+        )
+
+        # Lambda function for stopping servers
+        server_stopper_function = lambda_.Function(self, "ServerStopperFunction",
+            runtime=lambda_.Runtime.PYTHON_3_8,
+            code=lambda_.Code.from_asset('./server-stopper'),
+            handler="app.lambda_handler",
+            environment={
+                "DATABASE_NAME": db_name.value_as_string
+            }
+        )
+        server_stopper_function.add_to_role_policy(database_perms)
+        server_stopper_function.add_to_role_policy(list_ssm_actions_perms)
+        server_stopper_function.add_to_role_policy(run_command_perms)
