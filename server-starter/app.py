@@ -23,7 +23,7 @@ def lambda_handler(event, context):
         Key={
             'Id': id
         },
-        ProjectionExpression='EBS, Instance_Type, Key_Name, EC2Instance, EC2SpotRequest',
+        ProjectionExpression='Instance_Type, Key_Name',
         ConsistentRead=True
     )['Item']
 
