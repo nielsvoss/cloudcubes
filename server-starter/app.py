@@ -14,7 +14,7 @@ def lambda_handler(event, context):
     assert re.match(r'[a-z0-9\-.]', scripts_bucket)
 
     # Make sure server is offline
-    assert state in ['SERVER_SHUTDOWN_FUNCTION_CALLED', 'SERVER_STOPPING', 'SERVER_OFFLINE', ''], f"Server state {state} is not offline"
+    assert state in ['SERVER_OFFLINE', ''], f"Server state {state} is not offline"
 
     table = boto3.resource('dynamodb').Table(database_name)
 
