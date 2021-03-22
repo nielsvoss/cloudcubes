@@ -131,10 +131,11 @@ class CloudcubesStack(cdk.Stack):
         run_command_perms = iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
             resources=[
-                '*'
+                'arn:aws:ec2:*:*:instance/*',
+                'arn:aws:ssm:*:*:document/AWS-RunShellScript'
             ],
             actions=[
-                '*'
+                'ssm:SendCommand'
             ]
         )
 
