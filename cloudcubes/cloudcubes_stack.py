@@ -44,21 +44,21 @@ class CloudcubesStack(cdk.Stack):
         )
         scheduler_function.add_to_role_policy(database_perms)
 
-        # S3 bucket to store scripts (used by EC2 instances)
-        scripts_bucket = s3.Bucket(self, "ScriptsBucket",
+        # S3 bucket to store resources such as scripts (used by EC2 instances)
+        resources_bucket = s3.Bucket(self, "ResourcesBucket",
             versioned=False,
             removal_policy=cdk.RemovalPolicy.DESTROY
         )
 
-        scripts_bucket_deployment = s3_deployment.BucketDeployment(self, "ScriptsBucketDeployment",
-            destination_bucket=scripts_bucket,
-            sources=[s3_deployment.Source.asset('./scripts')]
+        resources_bucket_deployment = s3_deployment.BucketDeployment(self, "ResourcesBucketDeployment",
+            destination_bucket=resources_bucket,
+            sources=[s3_deployment.Source.asset('./resources')]
         )
 
-        # Permissions to read scripts bucket
-        scripts_bucket_perms = iam.PolicyStatement(
+        # Permissions to read resources bucket
+        resources_bucket_perms = iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
-            resources=[scripts_bucket.bucket_arn, f'{scripts_bucket.bucket_arn}/*'],
+            resources=[resources_bucket.bucket_arn, f'{resources_bucket.bucket_arn}/*'],
             actions=[
                 's3:ListBucket',
                 's3:GetObject'
@@ -78,7 +78,7 @@ class CloudcubesStack(cdk.Stack):
             assumed_by=iam.ServicePrincipal('ec2.amazonaws.com')
         )
         server_role.add_to_policy(database_perms)
-        server_role.add_to_policy(scripts_bucket_perms)
+        server_role.add_to_policy(resources_bucket_perms)
         server_role.add_to_policy(attach_volumes_perms)
         server_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name('AmazonSSMManagedInstanceCore'))
         server_instance_profile = iam.CfnInstanceProfile(self, "ServerInstanceProfile",
@@ -109,7 +109,7 @@ class CloudcubesStack(cdk.Stack):
             handler="app.lambda_handler",
             environment={
                 "DATABASE_NAME": db_name.value_as_string,
-                "SCRIPTS_BUCKET": scripts_bucket.bucket_name,
+                "RESOURCES_BUCKET": resources_bucket.bucket_name,
                 "SERVER_INSTANCE_PROFILE": server_instance_profile.attr_arn
             }
         )

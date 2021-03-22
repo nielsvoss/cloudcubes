@@ -8,10 +8,10 @@ def lambda_handler(event, context):
     id = event['Id']
     state = event['Server_State']
     database_name = os.environ['DATABASE_NAME']
-    scripts_bucket = os.environ['SCRIPTS_BUCKET']
+    resources_bucket = os.environ['RESOURCES_BUCKET']
     server_instance_profile = os.environ['SERVER_INSTANCE_PROFILE']
     assert re.match(r'[a-zA-Z0-9\-,._+:@%/]*', database_name)
-    assert re.match(r'[a-z0-9\-.]', scripts_bucket)
+    assert re.match(r'[a-z0-9\-.]', resources_bucket)
 
     # Make sure server is offline
     assert state in ['SERVER_OFFLINE', ''], f"Server state {state} is not offline"
@@ -32,13 +32,13 @@ def lambda_handler(event, context):
     #!/bin/bash
     export DATABASE_NAME={database_name}
     export SERVER_ID={int(id)}
-    export SCRIPTS_BUCKET={scripts_bucket}
+    export RESOURCES_BUCKET={resources_bucket}
 
     cd /home/ec2-user
     su -c '
     mkdir server-scripts
     cd server-scripts
-    aws s3 cp s3://${{SCRIPTS_BUCKET}}/server-startup . --recursive
+    aws s3 cp s3://${{RESOURCES_BUCKET}}/server-startup . --recursive
     chmod +x startup.sh
     ./startup.sh
     ' ec2-user
