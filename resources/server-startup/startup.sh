@@ -22,6 +22,7 @@ sleep 10
 # Run sudo mkfs.ext4 /dev/sdf before first use
 mkdir -m 000 /home/ec2-user/server
 sudo mount /dev/sdf /home/ec2-user/server
+sudo chmod -R +rwx server
 
 # Install java
 sudo amazon-linux-extras enable corretto8
