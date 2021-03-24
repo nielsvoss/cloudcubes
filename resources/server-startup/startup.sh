@@ -31,8 +31,8 @@ sudo yum -y install java-1.8.0-amazon-corretto
 # Run server in mounted volume
 cd /home/ec2-user/server
 if [ -f 'prepare.sh' ]; then
-    chmod +x prepare.sh
+    sudo chmod +x prepare.sh
     ./prepare.sh
 fi
-chmod +x start.sh
+sudo chmod +x start.sh
 ./start.sh
