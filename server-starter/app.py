@@ -9,9 +9,11 @@ def lambda_handler(event, context):
     state = event['Server_State']
     database_name = os.environ['DATABASE_NAME']
     resources_bucket = os.environ['RESOURCES_BUCKET']
+    data_bucket = os.environ['DATA_BUCKET']
     server_instance_profile = os.environ['SERVER_INSTANCE_PROFILE']
-    assert re.match(r'[a-zA-Z0-9\-,._+:@%/]*', database_name)
-    assert re.match(r'[a-z0-9\-.]', resources_bucket)
+    assert not re.search(r'[^a-zA-Z0-9\-,._+:@%/]', database_name)
+    assert not re.search(r'[^a-z0-9\-.]', resources_bucket)
+    assert not re.search(r'[^a-z0-9\-.]', data_bucket)
 
     # Make sure server is offline
     assert state in ['SERVER_OFFLINE', ''], f"Server state {state} is not offline"
@@ -33,6 +35,7 @@ def lambda_handler(event, context):
     export DATABASE_NAME={database_name}
     export SERVER_ID={int(id)}
     export RESOURCES_BUCKET={resources_bucket}
+    export DATA_BUCKET={data_bucket}
 
     cd /home/ec2-user
     su -c '

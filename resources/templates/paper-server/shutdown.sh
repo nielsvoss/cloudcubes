@@ -7,4 +7,6 @@ screen -S minecraft -p 0 -X stuff 'tellraw @a {"text":"Server will shutdown in 1
 sleep 10
 screen -S minecraft -p 0 -X stuff "stop^M"
 sleep 30
+sh backup.sh
+sleep 30
 sudo shutdown -h now

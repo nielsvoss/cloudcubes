@@ -10,9 +10,14 @@ class CloudcubesStack(cdk.Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # Name of the DynamoDB database
-        db_name = cdk.CfnParameter(self, "Database_Name",
+        db_name = cdk.CfnParameter(self, "DatabaseName",
             type="String",
             description="The name of the dynamodb database where the information on server data is stored."
+        )
+        
+        data_bucket_name = cdk.CfnParameter(self, "DataBucketName",
+            type="String",
+            description="The name of the S3 bucket where minecraft data such as backups should be stored"
         )
 
         # Grants access to the dynamodb database
@@ -30,6 +35,18 @@ class CloudcubesStack(cdk.Stack):
                 'dynamodb:Scan',
                 'dynamodb:Query',
                 'dynamodb:UpdateItem'
+            ]
+        )
+        
+        data_bucket_perms = iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            resources=[f'arn:aws:s3:::{data_bucket_name.value_as_string}', f'arn:aws:s3:::{data_bucket_name.value_as_string}/*'],
+            actions=[
+                's3:ListBucket',
+                's3:GetObject',
+                's3:PutObject',
+                's3:PutObjectAcl',
+                's3:DeleteObject'
             ]
         )
 
@@ -79,6 +96,7 @@ class CloudcubesStack(cdk.Stack):
         )
         server_role.add_to_policy(database_perms)
         server_role.add_to_policy(resources_bucket_perms)
+        server_role.add_to_policy(data_bucket_perms)
         server_role.add_to_policy(attach_volumes_perms)
         server_role.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name('AmazonSSMManagedInstanceCore'))
         server_instance_profile = iam.CfnInstanceProfile(self, "ServerInstanceProfile",
@@ -110,6 +128,7 @@ class CloudcubesStack(cdk.Stack):
             environment={
                 "DATABASE_NAME": db_name.value_as_string,
                 "RESOURCES_BUCKET": resources_bucket.bucket_name,
+                "DATA_BUCKET": data_bucket_name.value_as_string,
                 "SERVER_INSTANCE_PROFILE": server_instance_profile.attr_arn
             }
         )
