@@ -21,8 +21,8 @@ def lambda_handler(event, context):
     assert data['Server_State'] in ['SERVER_STARTED'], f"Server state {data['Server_State']} is not online"
 
     commands = [
-        'sudo shutdown -h +5',
-        'sudo sh /home/ec2-user/server/shutdown.sh'
+        "su -c '/home/ec2-user/server/shutdown.sh' ec2-user &",
+        "sudo shutdown -h +5"
     ]
 
     ssm_client = boto3.client('ssm')
