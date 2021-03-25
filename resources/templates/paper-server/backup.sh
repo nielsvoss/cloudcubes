@@ -15,5 +15,11 @@ fi
 
 cd /home/ec2-user
 sudo zip -r backup.zip server/minecraft
-aws s3 cp backup.zip s3://$data_bucket_name/backups/$name.zip
+aws s3 cp backup.zip s3://$data_bucket_name/backups/$name.zip --acl public-read
 sudo rm backup.zip
+
+# Uncomment to send message to webhook when backup is created
+# webhook_url=https://example.com/webhookurl
+# username=Backups
+# message="Backup with name $name created.\nhttps://$data_bucket_name.s3.amazonaws.com/backups/$name.zip"
+# curl -X POST -H "Content-Type: application/json" -d "{\"username\": \"$username\", \"content\":\"$message\"}" $webhook_url
