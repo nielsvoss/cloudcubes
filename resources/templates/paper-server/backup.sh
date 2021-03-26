@@ -13,10 +13,14 @@ else
   name=$(date +%Y.%m.%d.%H.%M.%S)
 fi
 
-cd /home/ec2-user
-sudo zip -r backup.zip server/minecraft
-aws s3 cp backup.zip s3://$data_bucket_name/backups/$name.zip --acl public-read
-sudo rm backup.zip
+cd /home/ec2-user/server/minecraft
+sudo zip -r /home/ec2-user/backup.zip \
+  world world_nether world_the_end logs \
+  server.properties bukkit.yml spigot.yml paper.yml help.yml eula.txt \
+  permissions.yml ops.json banned-players.json banned-ips.json \
+  whitelist.json usercache.json version_history.json start.sh
+aws s3 cp /home/ec2-user/backup.zip s3://$data_bucket_name/backups/$name.zip --acl public-read
+sudo rm /home/ec2-user/backup.zip
 
 # Uncomment to send message to webhook when backup is created
 # webhook_url=https://example.com/webhookurl
