@@ -10,3 +10,6 @@ sudo chmod +x /home/ec2-user/server/backup.sh
 
 # Give permissions to run shut down script
 sudo chmod +x /home/ec2-user/server/shutdown.sh
+
+# Uncomment to add ssh access to a GitHub user
+# curl https://github.com/<username>.keys >> ~/.ssh/authorized_keys
