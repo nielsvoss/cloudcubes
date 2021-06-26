@@ -1,0 +1,14 @@
+# Gradle build files
+.gradle
+**/build/
+!**/src/**/build/
+out/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Cache of project
+.gradletasknamecache
+
+# Virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
