@@ -12,3 +12,5 @@ dependencies {
 application {
     mainClassName = 'osbourn.cloudcubes.infrastructure.CloudCubesApp'
 }
+
+tasks.run.workingDir = rootDir
