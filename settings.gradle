@@ -1,1 +1,3 @@
 rootProject.name = 'cloudcubes'
+
+include 'infrastructure'
