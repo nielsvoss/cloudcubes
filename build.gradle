@@ -1,0 +1,15 @@
+plugins {
+    id 'java-library'
+}
+
+group 'osbourn.cloudcubes'
+version '0.1.0'
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    group = rootProject.group
+    version = rootProject.version
+}
