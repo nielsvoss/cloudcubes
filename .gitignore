@@ -15,3 +15,6 @@ hs_err_pid*
 
 # IntelliJ Idea files
 .idea
+
+# AWS CDK output files
+cdk.out
