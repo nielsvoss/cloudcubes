@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.1')
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb'
 }
