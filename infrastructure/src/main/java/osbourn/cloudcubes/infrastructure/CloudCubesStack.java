@@ -30,7 +30,7 @@ public class CloudCubesStack extends Stack {
                 .partitionKey(serverTablePartitionKey)
                 .build();
 
-        InfrastructureData infrastructureData = new InfrastructureData(serverTable.getTableName());
+        InfrastructureData infrastructureData = new InfrastructureData("US_EAST_2", serverTable.getTableName());
         Map<String, String> infrastructureDataMap = infrastructureData.convertToMap();
 
         // Create the server starter function

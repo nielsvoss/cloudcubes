@@ -1,5 +1,8 @@
 package osbourn.cloudcubes.core.constructs;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+
 import java.util.HashMap;
 
 /**
@@ -17,10 +20,16 @@ import java.util.HashMap;
  * </p>
  */
 public class InfrastructureData {
-    private String serverDataBaseName;
+    private final Region region;
+    private final String serverDataBaseName;
 
-    public InfrastructureData(String serverDataBaseName) {
+    public InfrastructureData(String region, String serverDataBaseName) {
+        this.region = Region.getRegion(Regions.fromName(region));
         this.serverDataBaseName = serverDataBaseName;
+    }
+
+    public Region getRegion() {
+        return region;
     }
 
     public String getServerDataBaseName() {
@@ -29,6 +38,7 @@ public class InfrastructureData {
 
     public HashMap<String, String> convertToMap() {
         HashMap<String, String> outputMap = new HashMap<>();
+        outputMap.put("CLOUDCUBESREGION", region.getName());
         outputMap.put("CLOUDCUBESSERVERDATABASENAME", serverDataBaseName);
         return outputMap;
     }
@@ -39,8 +49,10 @@ public class InfrastructureData {
      * @return The InfrastructureData object just generated
      */
     public static InfrastructureData fromEnvironment() {
+        String region = System.getenv("CLOUDCUBESREGION");
         String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
+        assert region != null;
         assert serverDataBaseName != null;
-        return new InfrastructureData(serverDataBaseName);
+        return new InfrastructureData(region, serverDataBaseName);
     }
 }
