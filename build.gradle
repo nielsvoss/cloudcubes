@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'java-library'
 }
@@ -12,4 +14,26 @@ allprojects {
 
     group = rootProject.group
     version = rootProject.version
+}
+
+task synth(type:Exec) {
+    group 'cdk'
+    dependsOn tasks.build
+    if (OperatingSystem.current().isWindows()) {
+        executable 'cdk.cmd'
+    } else {
+        executable 'cdk'
+    }
+    args 'synth'
+}
+
+task deploy(type:Exec) {
+    group 'cdk'
+    dependsOn tasks.synth
+    if (OperatingSystem.current().isWindows()) {
+        executable 'cdk.cmd'
+    } else {
+        executable 'cdk'
+    }
+    args 'deploy'
 }
