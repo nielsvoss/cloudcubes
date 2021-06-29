@@ -6,6 +6,8 @@ plugins {
 def CDK_VERSION = '1.98.0'
 
 dependencies {
+    implementation project(":core")
+
     implementation "software.amazon.awscdk:core:${CDK_VERSION}"
     implementation "software.amazon.awscdk:dynamodb:${CDK_VERSION}"
     implementation "software.amazon.awscdk:lambda:${CDK_VERSION}"

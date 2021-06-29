@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    implementation project(":core")
+
     // AWS Lambda Runtime
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
 
