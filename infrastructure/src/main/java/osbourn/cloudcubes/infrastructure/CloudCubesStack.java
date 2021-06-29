@@ -35,7 +35,7 @@ public class CloudCubesStack extends Stack {
 
         // Create the server starter function
         Function serverStarter = Function.Builder.create(this, "ServerStarter")
-                .code(Code.fromAsset("lambda/server-starter/build/libs/server-starter.jar"))
+                .code(Code.fromAsset("lambda/server-starter/build/libs/server-starter-all.jar"))
                 .handler("osbourn.cloudcubes.lambda.serverstarter.ServerStarterLambdaHandler")
                 .runtime(Runtime.JAVA_8)
                 .environment(infrastructureDataMap)

@@ -1,4 +1,5 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
     id 'java-library'
 }
 
@@ -15,4 +16,8 @@ dependencies {
 
 jar {
     archiveFileName.set('server-starter.jar')
+}
+
+shadowJar {
+    archiveFileName.set('server-starter-all.jar')
 }
