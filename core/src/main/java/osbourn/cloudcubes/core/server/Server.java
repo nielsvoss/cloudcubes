@@ -18,6 +18,17 @@ public class Server {
     }
 
     /**
+     * Send request to database to retrieve values, used in {@link #fromId(int, Table)}
+     */
+    private void initializeValues() {
+        Item databaseEntry = this.table.getItem("Id", id);
+        assert databaseEntry != null;
+
+        this.name = databaseEntry.getString("Name");
+        assert this.name != null;
+    }
+
+    /**
      * Creates a new server object by downloading the entry that corresponds to 'id' from the server database.
      *
      * @param id The id of the server in the server database
@@ -27,12 +38,7 @@ public class Server {
      */
     public static Server fromId(int id, Table table) {
         Server server = new Server(id, table);
-
-        Item databaseEntry = table.getItem("Id", id);
-        assert databaseEntry != null;
-        server.name = databaseEntry.getString("Name");
-        assert server.name != null;
-
+        server.initializeValues();
         return server;
     }
 }
