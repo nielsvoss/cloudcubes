@@ -7,6 +7,10 @@ plugins {
 group 'osbourn.cloudcubes'
 version '0.1.0'
 
+build {
+    dependsOn ":lambda:server-starter:shadowJar"
+}
+
 allprojects {
     repositories {
         mavenCentral()
