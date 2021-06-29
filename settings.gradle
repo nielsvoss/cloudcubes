@@ -2,3 +2,4 @@ rootProject.name = 'cloudcubes'
 
 include 'core'
 include 'infrastructure'
+include 'lambda:server-starter'

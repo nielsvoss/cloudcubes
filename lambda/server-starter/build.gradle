@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // AWS Lambda Runtime
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
+
+    // AWS SDK
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.1')
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb'
+}
+
+jar {
+    archiveFileName.set('server-starter.jar')
+}
