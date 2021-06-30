@@ -12,6 +12,9 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 public class Server {
     private final Table table;
     private String displayName;
+    private String EC2InstanceID;
+    private String EC2SpotRequestID;
+    private ServerState serverState;
 
     private boolean dirty = false;
 
@@ -29,8 +32,64 @@ public class Server {
         Item databaseEntry = this.table.getItem("Id", id);
         assert databaseEntry != null;
 
+        // Get values from database
         this.displayName = databaseEntry.getString("DisplayName");
+        this.EC2InstanceID = databaseEntry.getString("EC2InstanceId");
+        this.EC2SpotRequestID = databaseEntry.getString("EC2SpotRequestId");
+
+        // Make sure values that shouldn't be null aren't null
         assert this.displayName != null;
+
+        // Get server state
+        String serverStateDatabaseEntry = databaseEntry.getString("ServerState");
+        if (serverStateDatabaseEntry != null) {
+            switch (serverStateDatabaseEntry) {
+                case "OFFLINE":
+                    this.serverState = ServerState.OFFLINE;
+                    break;
+                case "ONLINE":
+                    this.serverState = ServerState.ONLINE;
+                    break;
+                case "UNKNOWN":
+                    this.serverState = ServerState.UNKNOWN;
+                    // TODO: Log warning
+                    break;
+                default:
+                    this.serverState = ServerState.UNKNOWN;
+                    // TODO: Log error
+                    break;
+            }
+        } else {
+            this.serverState = ServerState.UNKNOWN;
+            // TODO: Log error
+        }
+    }
+
+    protected ServerState getServerState() {
+        return serverState;
+    }
+
+    protected void setServerState(ServerState state) {
+        this.serverState = state;
+        dirty = true;
+    }
+
+    protected String getEC2InstanceID() {
+        return EC2InstanceID;
+    }
+
+    protected void setEC2InstanceID(String EC2InstanceID) {
+        this.EC2InstanceID = EC2InstanceID;
+        dirty = true;
+    }
+
+    protected String getEC2SpotRequestID() {
+        return EC2SpotRequestID;
+    }
+
+    protected void setEC2SpotRequestID(String EC2SpotRequestID) {
+        this.EC2SpotRequestID = EC2SpotRequestID;
+        dirty = true;
     }
 
     /**
@@ -74,9 +133,13 @@ public class Server {
      * @see #isDirty()
      */
     public void writeChangesToTable() {
-        String updateExpression = "set DisplayName = :n";
+        String serverStateAsString = this.serverState.toString();
+        String updateExpression = "set DisplayName = :n, EC2InstanceId = :i, EC2SpotRequestId = :r, ServerState = :s";
         ValueMap valueMap = new ValueMap()
-                .withString(":n", this.displayName);
+                .withString(":n", this.displayName)
+                .withString(":i", this.EC2InstanceID)
+                .withString(":r", this.EC2SpotRequestID)
+                .withString(":s", serverStateAsString);
         UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", this.id)
                 .withUpdateExpression(updateExpression)
                 .withValueMap(valueMap)
