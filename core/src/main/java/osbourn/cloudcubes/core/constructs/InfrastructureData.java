@@ -24,7 +24,7 @@ public class InfrastructureData {
     private final String serverDataBaseName;
 
     public InfrastructureData(String region, String serverDataBaseName) {
-        this.region = Region.getRegion(Regions.fromName(region));
+        this.region = Region.getRegion(Regions.fromName(region.toLowerCase().replace('_', '-')));
         this.serverDataBaseName = serverDataBaseName;
     }
 
