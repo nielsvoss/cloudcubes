@@ -11,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
  */
 public class Server {
     private final Table table;
-    private String name;
+    private String displayName;
 
     private boolean dirty = false;
 
@@ -29,8 +29,8 @@ public class Server {
         Item databaseEntry = this.table.getItem("Id", id);
         assert databaseEntry != null;
 
-        this.name = databaseEntry.getString("Name");
-        assert this.name != null;
+        this.displayName = databaseEntry.getString("DisplayName");
+        assert this.displayName != null;
     }
 
     /**
@@ -38,18 +38,18 @@ public class Server {
      *
      * @return The display name of the server
      */
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**
      * Sets the display name of the server. Note that this value will not be updated in the database until
      * {@link #writeChangesToTable()} is called.
      *
-     * @param name The new display name of the server.
+     * @param displayName The new display name of the server.
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
         dirty = true;
     }
 
@@ -74,9 +74,9 @@ public class Server {
      * @see #isDirty()
      */
     public void writeChangesToTable() {
-        String updateExpression = "set Name = :n";
+        String updateExpression = "set DisplayName = :n";
         ValueMap valueMap = new ValueMap()
-                .withString(":n", this.name);
+                .withString(":n", this.displayName);
         UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", this.id)
                 .withUpdateExpression(updateExpression)
                 .withValueMap(valueMap)
