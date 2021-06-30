@@ -29,6 +29,15 @@ public class Server {
     }
 
     /**
+     * Returns the display name of the server
+     *
+     * @return The display name of the server
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * Creates a new server object by downloading the entry that corresponds to 'id' from the server database.
      *
      * @param id The id of the server in the server database
