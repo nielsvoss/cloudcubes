@@ -40,7 +40,7 @@ public class CloudCubesStack extends Stack {
                 .runtime(Runtime.JAVA_8)
                 .environment(infrastructureDataMap)
                 .timeout(Duration.seconds(30))
-                .memorySize(128)
+                .memorySize(512)
                 .build();
     }
 }
