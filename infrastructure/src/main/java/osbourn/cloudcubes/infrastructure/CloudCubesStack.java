@@ -42,5 +42,7 @@ public class CloudCubesStack extends Stack {
                 .timeout(Duration.seconds(30))
                 .memorySize(512)
                 .build();
+
+        serverTable.grantReadWriteData(serverStarter);
     }
 }
