@@ -49,6 +49,20 @@ public class ServerInstance {
         return server.getServerState();
     }
 
+    public void startServer() {
+        if (!isServerOnline()) {
+            throw new IllegalStateException();
+        }
+
+        // Once the server starts, it will update the state in the database with a ONLINE state
+        // If the server startup fails the database will contain an UNKNOWN state
+        // and it will be checked the next time the state is read.
+        server.setServerState(ServerState.UNKNOWN);
+        server.writeChangesToTable();
+
+        // TODO: Launch EC2 Instance
+    }
+
     /**
      * Returns true if the server is online, false if it isn't. This is often preferable to {@link #getServerState()}
      * because it will verify the server state if it is unknown.
