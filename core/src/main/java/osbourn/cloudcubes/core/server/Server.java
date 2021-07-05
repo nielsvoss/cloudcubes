@@ -32,43 +32,18 @@ public class Server {
     }
 
     /**
-     * Send request to database to retrieve values, used in {@link #fromId(int, Table)}
+     * Some values, such as the server display name and the EC2InstanceId are likely to be used by the program.
+     * This method caches those values so they don't need to be retrieved later.
+     * This method is primarily intended to be used in {@link #fromId(int, Table)}.
      */
-    private void initializeValues() {
-        Item databaseEntry = this.table.getItem("Id", id);
-        assert databaseEntry != null;
-
-        // Get values from database
-        this.displayName = databaseEntry.getString("DisplayName");
-        this.EC2InstanceID = databaseEntry.getString("EC2InstanceId");
-        this.EC2SpotRequestID = databaseEntry.getString("EC2SpotRequestId");
-
-        // Make sure values that shouldn't be null aren't null
-        assert this.displayName != null;
-
-        // Get server state
-        String serverStateDatabaseEntry = databaseEntry.getString("ServerState");
-        if (serverStateDatabaseEntry != null) {
-            switch (serverStateDatabaseEntry) {
-                case "OFFLINE":
-                    this.serverState = ServerState.OFFLINE;
-                    break;
-                case "ONLINE":
-                    this.serverState = ServerState.ONLINE;
-                    break;
-                case "UNKNOWN":
-                    this.serverState = ServerState.UNKNOWN;
-                    // TODO: Log warning
-                    break;
-                default:
-                    this.serverState = ServerState.UNKNOWN;
-                    // TODO: Log error
-                    break;
-            }
-        } else {
-            this.serverState = ServerState.UNKNOWN;
-            // TODO: Log error
-        }
+    private void cacheInitialValues() {
+        // The output of this method call can be ignored because we only care about caching the values
+        requestStringValuesFromDatabase(
+                "DisplayName",
+                "EC2InstanceId",
+                "EC2SpotRequestId",
+                "ServerState"
+        );
     }
 
     /**
@@ -97,6 +72,7 @@ public class Server {
             return requestStringValueFromDatabase(valueToGet);
         }
     }
+
     /**
      * <p>
      * Gets a value associated with a key from the database, assuming the value is a String.
@@ -107,11 +83,13 @@ public class Server {
      * <p>
      * This method differs from {@link #getStringValue(String)} because getStringValue uses a cache and will only
      * download values that haven't yet been downloaded. This method will redownload the value even if it is already
-     * cached.
+     * cached. As such, getStringValue is preferable in most circumstances but this method is useful if you need to
+     * make sure the value is up to date.
      * </p>
      *
      * @param valueToGet The key of the value in the database
      * @return The value in the database, or null if it does not exist.
+     * @see #getStringValue(String) 
      */
     protected String requestStringValueFromDatabase(String valueToGet) {
         // Request value from database
@@ -122,6 +100,50 @@ public class Server {
         String value = item.getString(valueToGet);
         stringValueCache.put(valueToGet, value);
         return value;
+    }
+
+    /**
+     * <p>
+     * Gets multiple values from the database. This functions similar to {@link #requestStringValueFromDatabase(String)}
+     * but allows you to request multiple values at one time. This function may be slightly more efficient than calling
+     * requestStringValueFromDatabase multiple times.
+     * </p>
+     *
+     * <p>
+     * The entries in the array this method returns correspond in position to the entries in the 'valuesToGet' parameter.
+     * For example:
+     * <pre>{@code
+     * String displayName = requestStringValueFromDatabase("DisplayName");
+     * String EC2InstanceId = requestStringValueFromDatabase("EC2InstanceId");
+     * String EC2SpotRequestId = requestStringValueFromDatabase("EC2SpotRequestId");
+     * }</pre>
+     * can be replaced with
+     * <pre>{@code
+     * String[] values = requestStringValuesFromDatabase("DisplayName", "EC2InstanceId", "EC2SpotRequestId");
+     * String displayName = values[0];
+     * String EC2InstanceId = values[1];
+     * String EC2SpotRequestId = values[2];
+     * }</pre>
+     * </p>
+     *
+     * @param valuesToGet The keys of the values you want to request
+     * @return An array of the values you requested. An entry in the array may be null if the value did not exist.
+     */
+    protected String[] requestStringValuesFromDatabase(String... valuesToGet) {
+        // Request value from database
+        GetItemSpec getItemSpec = new GetItemSpec()
+                .withPrimaryKey("Id", id)
+                .withAttributesToGet(valuesToGet);
+        Item item = table.getItem(getItemSpec);
+
+        // Get values from 'item' variable
+        String[] values = new String[valuesToGet.length];
+        for (int i = 0; i < valuesToGet.length; i++) {
+            String value = item.getString(valuesToGet[i]);
+            stringValueCache.put(valuesToGet[i], value);
+            values[i] = value;
+        }
+        return values;
     }
 
     protected String getEC2InstanceID() {
@@ -208,7 +230,7 @@ public class Server {
      */
     public static Server fromId(int id, Table table) {
         Server server = new Server(id, table);
-        server.initializeValues();
+        server.cacheInitialValues();
         return server;
     }
 }
