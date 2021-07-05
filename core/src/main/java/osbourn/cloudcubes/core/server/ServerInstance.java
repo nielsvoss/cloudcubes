@@ -11,6 +11,23 @@ public class ServerInstance {
         this.server = server;
     }
 
+    private void setServerState(ServerState serverState) {
+        String serverStateAsString;
+        switch (serverState) {
+            case OFFLINE:
+                serverStateAsString = "OFFLINE";
+                break;
+            case ONLINE:
+                serverStateAsString = "ONLINE";
+                break;
+            case UNKNOWN:
+            default:
+                serverStateAsString = "UNKNOWN";
+                break;
+        }
+        server.setStringValue("ServerState", serverStateAsString);
+    }
+
     /**
      * Gets the Server object used to construct this class.
      *
@@ -26,7 +43,7 @@ public class ServerInstance {
      * @return The EC2InstanceId of the Server, or null if the server is not running.
      */
     public String getEC2InstanceId() {
-        return server.getEC2InstanceID();
+        return server.getStringValue("EC2InstanceId");
     }
 
     /**
@@ -35,7 +52,7 @@ public class ServerInstance {
      * @return The Id of the EC2 Spot Request running the server, or null if it does not exist.
      */
     public String getSpotRequestId() {
-        return server.getEC2SpotRequestID();
+        return server.getStringValue("EC2SpotRequestId");
     }
 
     /**
@@ -46,7 +63,19 @@ public class ServerInstance {
      * @see #isServerOnline()
      */
     public ServerState getServerState() {
-        return server.getServerState();
+        String serverStateAsString = server.getStringValue("ServerState");
+        assert serverStateAsString != null;
+        switch (serverStateAsString) {
+            case "OFFLINE":
+                return ServerState.OFFLINE;
+            case "ONLINE":
+                return ServerState.ONLINE;
+            case "UNKNOWN":
+                return ServerState.UNKNOWN;
+            default:
+                // TODO Throw exception or log warning
+                return ServerState.UNKNOWN;
+        }
     }
 
     public void startServer() {
@@ -57,8 +86,7 @@ public class ServerInstance {
         // Once the server starts, it will update the state in the database with a ONLINE state
         // If the server startup fails the database will contain an UNKNOWN state
         // and it will be checked the next time the state is read.
-        server.setServerState(ServerState.UNKNOWN);
-        server.writeChangesToTable();
+        setServerState(ServerState.UNKNOWN);
 
         // TODO: Launch EC2 Instance
     }
