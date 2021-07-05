@@ -22,8 +22,6 @@ public class Server {
      */
     private final Map<String, String> stringValueCache = new HashMap<>();
 
-    private boolean dirty = false;
-
     public final int id;
 
     private Server(int id, Table table) {
@@ -146,78 +144,37 @@ public class Server {
         return values;
     }
 
-    protected String getEC2InstanceID() {
-        return getStringValue("EC2InstanceId");
-    }
+    protected void setStringValue(String key, String value) {
+        String updateExpression = String.format("SET %s = :v", key);
+        ValueMap valueMap = new ValueMap().withString(":v", value);
+        UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", this.id)
+                .withUpdateExpression(updateExpression)
+                .withValueMap(valueMap)
+                .withReturnValues(ReturnValue.NONE);
+        this.table.updateItem(updateItemSpec);
 
-    protected void setEC2InstanceID(String EC2InstanceID) {
-        this.EC2InstanceID = EC2InstanceID;
-        dirty = true;
-    }
-
-    protected String getEC2SpotRequestID() {
-        return getStringValue("EC2SpotRequestId");
-    }
-
-    protected void setEC2SpotRequestID(String EC2SpotRequestID) {
-        this.EC2SpotRequestID = EC2SpotRequestID;
-        dirty = true;
+        // Cache new value
+        stringValueCache.put(key, value);
     }
 
     /**
-     * Returns the display name of the server
+     * Gets the display name of the server from the database
      *
      * @return The display name of the server
      */
     public String getDisplayName() {
-        return getStringValue("DisplayName");
+        String displayName = getStringValue("DisplayName");
+        assert displayName != null;
+        return displayName;
     }
 
     /**
-     * Sets the display name of the server. Note that this value will not be updated in the database until
-     * {@link #writeChangesToTable()} is called.
+     * Sets the display name of the server. The database will be updated with the new value.
      *
      * @param displayName The new display name of the server.
      */
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-        dirty = true;
-    }
-
-    /**
-     * When a value in this class is set via a setter method, it doesn't write the changes out to the database until
-     * {@link #writeChangesToTable()} is called. This object is considered dirty if a value has been set but the
-     * database table has not been updated. This method returns true if the object is dirty and the database needs to
-     * be updated.
-     *
-     * @return True if the database needs to be updated, false otherwise.
-     * @see #writeChangesToTable()
-     */
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    /**
-     * When a value in this class is set via a setter method, it doesn't write teh changes out to the database until
-     * this method is called. (You can check if you need to call this method by running {@link #isDirty()}.)
-     * This method will update the database will the new values that are stored locally in this object.
-     *
-     * @see #isDirty()
-     */
-    public void writeChangesToTable() {
-        String serverStateAsString = this.serverState.toString();
-        String updateExpression = "set DisplayName = :n, EC2InstanceId = :i, EC2SpotRequestId = :r, ServerState = :s";
-        ValueMap valueMap = new ValueMap()
-                .withString(":n", this.displayName)
-                .withString(":i", this.EC2InstanceID)
-                .withString(":r", this.EC2SpotRequestID)
-                .withString(":s", serverStateAsString);
-        UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", this.id)
-                .withUpdateExpression(updateExpression)
-                .withValueMap(valueMap)
-                .withReturnValues(ReturnValue.UPDATED_NEW);
-        this.table.updateItem(updateItemSpec);
-        dirty = false;
+        setStringValue("DisplayName", displayName);
     }
 
     /**
