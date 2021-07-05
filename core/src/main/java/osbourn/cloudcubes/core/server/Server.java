@@ -2,19 +2,25 @@ package osbourn.cloudcubes.core.server;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a server entry on the DynamoDB database.
  */
 public class Server {
     private final Table table;
-    private String displayName;
-    private String EC2InstanceID;
-    private String EC2SpotRequestID;
-    private ServerState serverState;
+
+    /**
+     * Contains a local cache of values the user requested from the database.
+     * Format for each entry is ("nameOfKey", "valueInDatabase")
+     */
+    private final Map<String, String> stringValueCache = new HashMap<>();
 
     private boolean dirty = false;
 
@@ -65,17 +71,61 @@ public class Server {
         }
     }
 
-    protected ServerState getServerState() {
-        return serverState;
+    /**
+     * <p>
+     * Gets a value associated with a key from the database, assuming the value is a String.
+     * For example, calling this method with the argument "DisplayName" would read the database for that value and
+     * would return it.
+     * </p>
+     *
+     * <p>
+     * This method differs from {@link #requestStringValueFromDatabase(String)} because it uses a local cache to
+     * determine if a value has been downloaded before. As such, it can be slightly more efficient if multiple
+     * parts of the code try to download the same value, but you can call requestStringValueFromDatabase if you need
+     * to make sure that the value is up to date.
+     * </p>
+     *
+     * @param valueToGet The key of the value in the database
+     * @return The value in the database, or null if it does not exist.
+     * @see #requestStringValueFromDatabase(String)
+     */
+    protected String getStringValue(String valueToGet) {
+        // Check if value has been cached
+        if (stringValueCache.containsKey(valueToGet)) {
+            return stringValueCache.get(valueToGet);
+        } else {
+            return requestStringValueFromDatabase(valueToGet);
+        }
     }
-
-    protected void setServerState(ServerState state) {
-        this.serverState = state;
-        dirty = true;
+    /**
+     * <p>
+     * Gets a value associated with a key from the database, assuming the value is a String.
+     * For example, calling this method with the argument "DisplayName" would read the database for that value and
+     * would return it.
+     * </p>
+     *
+     * <p>
+     * This method differs from {@link #getStringValue(String)} because getStringValue uses a cache and will only
+     * download values that haven't yet been downloaded. This method will redownload the value even if it is already
+     * cached.
+     * </p>
+     *
+     * @param valueToGet The key of the value in the database
+     * @return The value in the database, or null if it does not exist.
+     */
+    protected String requestStringValueFromDatabase(String valueToGet) {
+        // Request value from database
+        GetItemSpec getItemSpec = new GetItemSpec()
+                .withPrimaryKey("Id", id)
+                .withAttributesToGet(valueToGet);
+        Item item = table.getItem(getItemSpec);
+        String value = item.getString(valueToGet);
+        stringValueCache.put(valueToGet, value);
+        return value;
     }
 
     protected String getEC2InstanceID() {
-        return EC2InstanceID;
+        return getStringValue("EC2InstanceId");
     }
 
     protected void setEC2InstanceID(String EC2InstanceID) {
@@ -84,7 +134,7 @@ public class Server {
     }
 
     protected String getEC2SpotRequestID() {
-        return EC2SpotRequestID;
+        return getStringValue("EC2SpotRequestId");
     }
 
     protected void setEC2SpotRequestID(String EC2SpotRequestID) {
@@ -98,7 +148,7 @@ public class Server {
      * @return The display name of the server
      */
     public String getDisplayName() {
-        return displayName;
+        return getStringValue("DisplayName");
     }
 
     /**
