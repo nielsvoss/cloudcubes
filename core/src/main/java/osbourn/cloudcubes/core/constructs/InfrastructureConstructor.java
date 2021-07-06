@@ -4,6 +4,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 
 /**
  * Retrieves information from an InfrastructureData object and generates AWS SDK objects.
@@ -15,6 +17,7 @@ public class InfrastructureConstructor {
     private AmazonDynamoDB amazonDynamoDB = null;
     private DynamoDB dynamoDB = null;
     private Table serverTable = null;
+    private AmazonEC2 amazonEC2 = null;
 
     /**
      * Generates an InfrastructureConstructor object from an InfrastructureData object.
@@ -55,5 +58,14 @@ public class InfrastructureConstructor {
             serverTable = getDynamoDB().getTable(infrastructureData.getServerDataBaseName());
         }
         return serverTable;
+    }
+
+    public AmazonEC2 getAmazonEC2() {
+        if (amazonEC2 == null) {
+            amazonEC2 = AmazonEC2ClientBuilder.standard()
+                    .withRegion(infrastructureData.getRegion().getName())
+                    .build();
+        }
+        return amazonEC2;
     }
 }
