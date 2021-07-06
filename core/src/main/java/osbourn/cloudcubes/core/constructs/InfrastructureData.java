@@ -22,10 +22,12 @@ import java.util.HashMap;
 public class InfrastructureData {
     private final Region region;
     private final String serverDataBaseName;
+    private final String serverSecurityGroupName;
 
-    public InfrastructureData(String region, String serverDataBaseName) {
+    public InfrastructureData(String region, String serverDataBaseName, String serverSecurityGroupName) {
         this.region = Region.getRegion(Regions.fromName(region.toLowerCase().replace('_', '-')));
         this.serverDataBaseName = serverDataBaseName;
+        this.serverSecurityGroupName = serverSecurityGroupName;
     }
 
     public Region getRegion() {
@@ -36,10 +38,15 @@ public class InfrastructureData {
         return serverDataBaseName;
     }
 
+    public String getServerSecurityGroupName() {
+        return serverSecurityGroupName;
+    }
+
     public HashMap<String, String> convertToMap() {
         HashMap<String, String> outputMap = new HashMap<>();
         outputMap.put("CLOUDCUBESREGION", region.getName());
         outputMap.put("CLOUDCUBESSERVERDATABASENAME", serverDataBaseName);
+        outputMap.put("CLOUDCUBESSERVERSECURITYGROUPNAME", serverSecurityGroupName);
         return outputMap;
     }
 
@@ -51,8 +58,10 @@ public class InfrastructureData {
     public static InfrastructureData fromEnvironment() {
         String region = System.getenv("CLOUDCUBESREGION");
         String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
+        String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
         assert region != null;
         assert serverDataBaseName != null;
-        return new InfrastructureData(region, serverDataBaseName);
+        assert serverSecurityGroupName != null;
+        return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName);
     }
 }

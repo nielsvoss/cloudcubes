@@ -1,14 +1,23 @@
 package osbourn.cloudcubes.core.server;
 
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.model.*;
+
+import java.util.List;
+
 /**
  * Represents an EC2 instance that corresponds to a Server object.
  * Can be online or offline.
  */
 public class ServerInstance {
     private final Server server;
+    private final AmazonEC2 ec2;
+    private final String serverSecurityGroup;
 
-    public ServerInstance(Server server) {
+    public ServerInstance(Server server, AmazonEC2 ec2, String serverSecurityGroup) {
         this.server = server;
+        this.ec2 = ec2;
+        this.serverSecurityGroup = serverSecurityGroup;
     }
 
     private void setServerState(ServerState serverState) {
@@ -35,6 +44,15 @@ public class ServerInstance {
      */
     public Server getServer() {
         return server;
+    }
+
+    /**
+     * Gets the AmazonEC2 object used to construct this class.
+     *
+     * @return The AmazonEC2 object used to construct this class.
+     */
+    public AmazonEC2 getEC2() {
+        return ec2;
     }
 
     /**
@@ -79,8 +97,10 @@ public class ServerInstance {
     }
 
     public void startServer() {
-        if (!isServerOnline()) {
-            throw new IllegalStateException();
+        final String amazonLinux2AmiId = "ami-0277b52859bac6f4b";
+
+        if (isServerOnline()) {
+            throw new IllegalStateException("The server is currently online");
         }
 
         // Once the server starts, it will update the state in the database with a ONLINE state
@@ -88,7 +108,25 @@ public class ServerInstance {
         // and it will be checked the next time the state is read.
         setServerState(ServerState.UNKNOWN);
 
-        // TODO: Launch EC2 Instance
+        // Request EC2 Instance
+        LaunchSpecification launchSpecification = new LaunchSpecification()
+                .withImageId(amazonLinux2AmiId)
+                .withInstanceType(InstanceType.M5Large)
+                .withSecurityGroups(serverSecurityGroup);
+        RequestSpotInstancesRequest spotInstancesRequest = new RequestSpotInstancesRequest()
+                .withInstanceCount(1)
+                .withLaunchSpecification(launchSpecification);
+        RequestSpotInstancesResult requestResult = ec2.requestSpotInstances(spotInstancesRequest);
+
+        List<SpotInstanceRequest> requestResponses = requestResult.getSpotInstanceRequests();
+        // requestResponses should only contain one request
+        assert requestResponses.size() == 1;
+        String spotInstanceId = requestResponses.get(0).getSpotInstanceRequestId();
+
+        // Update database with requestId
+        server.setStringValue("EC2SpotRequestId", spotInstanceId);
+
+        // TODO: Update database with the EC2 Instance Id once the server has started
     }
 
     /**
