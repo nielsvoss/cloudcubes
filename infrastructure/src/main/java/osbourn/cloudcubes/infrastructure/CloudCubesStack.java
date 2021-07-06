@@ -52,11 +52,11 @@ public class CloudCubesStack extends Stack {
         connections.allowFromAnyIpv4(Port.tcp(sshPort), "Allows TCP access through SSH");
 
         // Create InfrastructureData object to determine environment variables for the lambda functions
-        InfrastructureData infrastructureData = new InfrastructureData(
-                "US-EAST-2",
-                serverTable.getTableName(),
-                serverSecurityGroup.getSecurityGroupName()
-        );
+        InfrastructureData infrastructureData = InfrastructureData.Builder.create()
+                .withRegion("US-EAST-2")
+                .withServerDatabaseName(serverTable.getTableName())
+                .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
+                .build();
         Map<String, String> infrastructureDataMap = infrastructureData.convertToMap();
 
         // Create the server starter function

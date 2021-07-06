@@ -64,4 +64,82 @@ public class InfrastructureData {
         assert serverSecurityGroupName != null;
         return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName);
     }
+
+    /**
+     * A helper class used to construct a InfrastructureData object. This class exists because objects of type
+     * InfrastructureData cannot be modified. This class allows constructing an InfrastructureData object in parts,
+     * allowing this job to be offloaded to different parts of the code and only constructed when finished.
+     */
+    public static class Builder {
+        String region = null;
+        String serverDataBaseName = null;
+        String serverSecurityGroupName = null;
+
+        private Builder() {}
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public void setRegion(String region) {
+            this.region = region;
+        }
+
+        public Builder withRegion(String region) {
+            setRegion(region);
+            return this;
+        }
+
+        public String getServerDataBaseName() {
+            return serverDataBaseName;
+        }
+
+        public void setServerDataBaseName(String serverDataBaseName) {
+            this.serverDataBaseName = serverDataBaseName;
+        }
+
+        public Builder withServerDatabaseName(String serverDataBaseName) {
+            setServerDataBaseName(serverDataBaseName);
+            return this;
+        }
+
+        public String getServerSecurityGroupName() {
+            return serverSecurityGroupName;
+        }
+
+        public void setServerSecurityGroupName(String serverSecurityGroupName) {
+            this.serverSecurityGroupName = serverSecurityGroupName;
+        }
+
+        public Builder withServerSecurityGroupName(String serverSecurityGroupName) {
+            setServerSecurityGroupName(serverSecurityGroupName);
+            return this;
+        }
+
+        /**
+         * Returns true if all the values that are required to build an InfrastructureData object have been set.
+         *
+         * @return If all the values required to build an InfrastructureData object have been set.
+         */
+        public boolean canBeConstructed() {
+            return region != null && serverDataBaseName != null && serverSecurityGroupName != null;
+        }
+
+        /**
+         * Builds the InfrastructureData object
+         *
+         * @return The newly built InfrastructureData object.
+         * @throws IllegalArgumentException If the Builder does not have all required values set
+         */
+        public InfrastructureData build() {
+            if (!canBeConstructed()) {
+                throw new IllegalStateException("Builder object does not yet have all the required values set.");
+            }
+            return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName);
+        }
+    }
 }
