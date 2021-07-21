@@ -23,11 +23,13 @@ public class InfrastructureData {
     private final Region region;
     private final String serverDataBaseName;
     private final String serverSecurityGroupName;
+    private final String serverVpcId;
 
-    public InfrastructureData(String region, String serverDataBaseName, String serverSecurityGroupName) {
+    public InfrastructureData(String region, String serverDataBaseName, String serverSecurityGroupName, String serverVpcId) {
         this.region = Region.getRegion(Regions.fromName(region.toLowerCase().replace('_', '-')));
         this.serverDataBaseName = serverDataBaseName;
         this.serverSecurityGroupName = serverSecurityGroupName;
+        this.serverVpcId = serverVpcId;
     }
 
     public Region getRegion() {
@@ -42,11 +44,16 @@ public class InfrastructureData {
         return serverSecurityGroupName;
     }
 
+    public String getServerVpcId() {
+        return serverVpcId;
+    }
+
     public HashMap<String, String> convertToMap() {
         HashMap<String, String> outputMap = new HashMap<>();
         outputMap.put("CLOUDCUBESREGION", region.getName());
         outputMap.put("CLOUDCUBESSERVERDATABASENAME", serverDataBaseName);
         outputMap.put("CLOUDCUBESSERVERSECURITYGROUPNAME", serverSecurityGroupName);
+        outputMap.put("CLOUDCUBESSERVERVPCID", serverVpcId);
         return outputMap;
     }
 
@@ -59,10 +66,11 @@ public class InfrastructureData {
         String region = System.getenv("CLOUDCUBESREGION");
         String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
         String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
+        String serverVpcId = System.getenv("CLOUDCUBESSERVERVPCID");
         assert region != null;
         assert serverDataBaseName != null;
         assert serverSecurityGroupName != null;
-        return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName);
+        return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName, serverVpcId);
     }
 
     /**
@@ -71,9 +79,10 @@ public class InfrastructureData {
      * allowing this job to be offloaded to different parts of the code and only constructed when finished.
      */
     public static class Builder {
-        String region = null;
-        String serverDataBaseName = null;
-        String serverSecurityGroupName = null;
+        private String region = null;
+        private String serverDataBaseName = null;
+        private String serverSecurityGroupName = null;
+        private String serverVpcId = null;
 
         private Builder() {}
 
@@ -120,26 +129,39 @@ public class InfrastructureData {
             return this;
         }
 
+        public String getServerVpcId() {
+            return serverVpcId;
+        }
+
+        public void setServerVpcId(String serverVpcId) {
+            this.serverVpcId = serverVpcId;
+        }
+
+        public Builder withServerVpcId(String serverVpcId) {
+            setServerDataBaseName(serverVpcId);
+            return this;
+        }
+
         /**
          * Returns true if all the values that are required to build an InfrastructureData object have been set.
          *
          * @return If all the values required to build an InfrastructureData object have been set.
          */
         public boolean canBeConstructed() {
-            return region != null && serverDataBaseName != null && serverSecurityGroupName != null;
+            return region != null && serverDataBaseName != null && serverSecurityGroupName != null && serverVpcId != null;
         }
 
         /**
          * Builds the InfrastructureData object
          *
          * @return The newly built InfrastructureData object.
-         * @throws IllegalArgumentException If the Builder does not have all required values set
+         * @throws IllegalStateException If the Builder does not have all required values set
          */
         public InfrastructureData build() {
             if (!canBeConstructed()) {
                 throw new IllegalStateException("Builder object does not yet have all the required values set.");
             }
-            return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName);
+            return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName, serverVpcId);
         }
     }
 }

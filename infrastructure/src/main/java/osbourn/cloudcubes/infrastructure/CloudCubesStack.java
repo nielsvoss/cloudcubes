@@ -62,6 +62,7 @@ public class CloudCubesStack extends Stack {
                 .withRegion("US-EAST-2")
                 .withServerDatabaseName(serverTable.getTableName())
                 .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
+                .withServerVpcId(serverVpc.getVpcId())
                 .build();
         Map<String, String> infrastructureDataMap = infrastructureData.convertToMap();
 
