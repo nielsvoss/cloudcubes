@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.services.ec2.model.Vpc;
 
 /**
  * Retrieves information from an InfrastructureData object and generates AWS SDK objects.
@@ -18,6 +19,7 @@ public class InfrastructureConstructor {
     private DynamoDB dynamoDB = null;
     private Table serverTable = null;
     private AmazonEC2 amazonEC2 = null;
+    private Vpc serverVpc = null;
 
     /**
      * Generates an InfrastructureConstructor object from an InfrastructureData object.
@@ -67,5 +69,12 @@ public class InfrastructureConstructor {
                     .build();
         }
         return amazonEC2;
+    }
+
+    public Vpc getServerVpc() {
+        if (serverVpc == null) {
+            serverVpc = new Vpc().withVpcId(infrastructureData.getServerVpcId());
+        }
+        return serverVpc;
     }
 }
