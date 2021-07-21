@@ -36,6 +36,9 @@ public class CloudCubesStack extends Stack {
 
         // Create VPC
         Vpc serverVpc = Vpc.Builder.create(this, "ServerVpc")
+                // This will force AWS to create public subnets instead of private subnets
+                // Without this setting, AWS will create a NAT Gateway for the private subnets, costing $0.045 per hour
+                .natGateways(0)
                 .build();
 
         // Create security group used by server instances
