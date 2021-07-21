@@ -13,10 +13,13 @@ import software.amazon.awscdk.services.ec2.Connections;
 import software.amazon.awscdk.services.ec2.Port;
 import software.amazon.awscdk.services.ec2.SecurityGroup;
 import software.amazon.awscdk.services.ec2.Vpc;
+import software.amazon.awscdk.services.iam.Effect;
+import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class CloudCubesStack extends Stack {
@@ -71,7 +74,12 @@ public class CloudCubesStack extends Stack {
                 .timeout(Duration.seconds(30))
                 .memorySize(512)
                 .build();
-
+        assert serverStarter.getRole() != null;
+        serverStarter.getRole().addToPrincipalPolicy(PolicyStatement.Builder.create()
+                .effect(Effect.ALLOW)
+                .resources(Collections.singletonList("*"))
+                .actions(Collections.singletonList("ec2:RequestSpotInstances"))
+                .build());
         serverTable.grantReadWriteData(serverStarter);
     }
 }
