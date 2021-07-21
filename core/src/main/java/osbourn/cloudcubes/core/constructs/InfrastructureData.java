@@ -138,7 +138,7 @@ public class InfrastructureData {
         }
 
         public Builder withServerVpcId(String serverVpcId) {
-            setServerDataBaseName(serverVpcId);
+            setServerVpcId(serverVpcId);
             return this;
         }
 
