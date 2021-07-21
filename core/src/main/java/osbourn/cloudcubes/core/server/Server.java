@@ -12,6 +12,8 @@ import java.util.Map;
 
 /**
  * Represents a server entry on the DynamoDB database.
+ * This class primarily acts as an interface to the DynamoDB table, allowing you to read and set values in the database.
+ * In most situations, the database values will be set using helper classes such as {@link ServerOptions}.
  */
 public class Server {
     private final Table table;
@@ -62,7 +64,7 @@ public class Server {
      * @return The value in the database, or null if it does not exist.
      * @see #requestStringValueFromDatabase(String)
      */
-    protected String getStringValue(String valueToGet) {
+    public String getStringValue(String valueToGet) {
         // Check if value has been cached
         if (stringValueCache.containsKey(valueToGet)) {
             return stringValueCache.get(valueToGet);
@@ -89,7 +91,7 @@ public class Server {
      * @return The value in the database, or null if it does not exist.
      * @see #getStringValue(String) 
      */
-    protected String requestStringValueFromDatabase(String valueToGet) {
+    public String requestStringValueFromDatabase(String valueToGet) {
         // Request value from database
         GetItemSpec getItemSpec = new GetItemSpec()
                 .withPrimaryKey("Id", id)
@@ -127,7 +129,7 @@ public class Server {
      * @param valuesToGet The keys of the values you want to request
      * @return An array of the values you requested. An entry in the array may be null if the value did not exist.
      */
-    protected String[] requestStringValuesFromDatabase(String... valuesToGet) {
+    public String[] requestStringValuesFromDatabase(String... valuesToGet) {
         // Request value from database
         GetItemSpec getItemSpec = new GetItemSpec()
                 .withPrimaryKey("Id", id)
@@ -144,7 +146,7 @@ public class Server {
         return values;
     }
 
-    protected void setStringValue(String key, String value) {
+    public void setStringValue(String key, String value) {
         String updateExpression = String.format("SET %s = :v", key);
         ValueMap valueMap = new ValueMap().withString(":v", value);
         UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", this.id)
@@ -155,26 +157,6 @@ public class Server {
 
         // Cache new value
         stringValueCache.put(key, value);
-    }
-
-    /**
-     * Gets the display name of the server from the database
-     *
-     * @return The display name of the server
-     */
-    public String getDisplayName() {
-        String displayName = getStringValue("DisplayName");
-        assert displayName != null;
-        return displayName;
-    }
-
-    /**
-     * Sets the display name of the server. The database will be updated with the new value.
-     *
-     * @param displayName The new display name of the server.
-     */
-    public void setDisplayName(String displayName) {
-        setStringValue("DisplayName", displayName);
     }
 
     /**
