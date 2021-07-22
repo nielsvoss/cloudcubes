@@ -3,7 +3,9 @@ package osbourn.cloudcubes.core.constructs;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
@@ -24,12 +26,20 @@ public class InfrastructureData {
     private final String serverDataBaseName;
     private final String serverSecurityGroupName;
     private final String serverVpcId;
+    private final List<String> serverSubnetIds;
 
-    public InfrastructureData(String region, String serverDataBaseName, String serverSecurityGroupName, String serverVpcId) {
+    public InfrastructureData(
+            String region,
+            String serverDataBaseName,
+            String serverSecurityGroupName,
+            String serverVpcId,
+            List<String> serverSubnetIds
+    ) {
         this.region = Region.getRegion(Regions.fromName(region.toLowerCase().replace('_', '-')));
         this.serverDataBaseName = serverDataBaseName;
         this.serverSecurityGroupName = serverSecurityGroupName;
         this.serverVpcId = serverVpcId;
+        this.serverSubnetIds = serverSubnetIds;
     }
 
     public Region getRegion() {
@@ -48,12 +58,18 @@ public class InfrastructureData {
         return serverVpcId;
     }
 
+    public List<String> getServerSubnetIds() {
+        return serverSubnetIds;
+    }
+
     public HashMap<String, String> convertToMap() {
         HashMap<String, String> outputMap = new HashMap<>();
         outputMap.put("CLOUDCUBESREGION", region.getName());
         outputMap.put("CLOUDCUBESSERVERDATABASENAME", serverDataBaseName);
         outputMap.put("CLOUDCUBESSERVERSECURITYGROUPNAME", serverSecurityGroupName);
         outputMap.put("CLOUDCUBESSERVERVPCID", serverVpcId);
+        String serverSubnetIdsAsString = String.join(",", serverSubnetIds);
+        outputMap.put("CLOUDCUBESSERVERSUBNETIDS", serverSubnetIdsAsString);
         return outputMap;
     }
 
@@ -67,10 +83,18 @@ public class InfrastructureData {
         String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
         String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
         String serverVpcId = System.getenv("CLOUDCUBESSERVERVPCID");
+        String serverSubnetIdsAsString = System.getenv("CLOUDCUBESSERVERSUBNETIDS");
+        List<String> serverSubnetIds = Arrays.asList(serverSubnetIdsAsString.split(","));
         assert region != null;
         assert serverDataBaseName != null;
         assert serverSecurityGroupName != null;
-        return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName, serverVpcId);
+        return new InfrastructureData(
+                region,
+                serverDataBaseName,
+                serverSecurityGroupName,
+                serverVpcId,
+                serverSubnetIds
+        );
     }
 
     /**
@@ -83,6 +107,7 @@ public class InfrastructureData {
         private String serverDataBaseName = null;
         private String serverSecurityGroupName = null;
         private String serverVpcId = null;
+        private List<String> serverSubnetIds = null;
 
         private Builder() {}
 
@@ -142,13 +167,30 @@ public class InfrastructureData {
             return this;
         }
 
+        public List<String> getServerSubnetIds() {
+            return serverSubnetIds;
+        }
+
+        public void setServerSubnetIds(List<String> serverSubnetIds) {
+            this.serverSubnetIds = serverSubnetIds;
+        }
+
+        public Builder withServerSubnetIds(List<String> serverSubnetIds) {
+            setServerSubnetIds(serverSubnetIds);
+            return this;
+        }
+
         /**
          * Returns true if all the values that are required to build an InfrastructureData object have been set.
          *
          * @return If all the values required to build an InfrastructureData object have been set.
          */
         public boolean canBeConstructed() {
-            return region != null && serverDataBaseName != null && serverSecurityGroupName != null && serverVpcId != null;
+            return region != null
+                    && serverDataBaseName != null
+                    && serverSecurityGroupName != null
+                    && serverVpcId != null
+                    && serverSubnetIds != null;
         }
 
         /**
@@ -161,7 +203,13 @@ public class InfrastructureData {
             if (!canBeConstructed()) {
                 throw new IllegalStateException("Builder object does not yet have all the required values set.");
             }
-            return new InfrastructureData(region, serverDataBaseName, serverSecurityGroupName, serverVpcId);
+            return new InfrastructureData(
+                    region,
+                    serverDataBaseName,
+                    serverSecurityGroupName,
+                    serverVpcId,
+                    serverSubnetIds
+            );
         }
     }
 }

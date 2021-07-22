@@ -9,17 +9,16 @@ import software.amazon.awscdk.services.dynamodb.Attribute;
 import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
 import software.amazon.awscdk.services.dynamodb.Table;
-import software.amazon.awscdk.services.ec2.Connections;
-import software.amazon.awscdk.services.ec2.Port;
-import software.amazon.awscdk.services.ec2.SecurityGroup;
-import software.amazon.awscdk.services.ec2.Vpc;
+import software.amazon.awscdk.services.ec2.*;
 import software.amazon.awscdk.services.iam.Effect;
 import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class CloudCubesStack extends Stack {
@@ -58,11 +57,16 @@ public class CloudCubesStack extends Stack {
         connections.allowFromAnyIpv4(Port.tcp(sshPort), "Allows TCP access through SSH");
 
         // Create InfrastructureData object to determine environment variables for the lambda functions
+        List<String> serverSubnetIds = new ArrayList<>();
+        for (ISubnet subnet : serverVpc.getPublicSubnets()) {
+            serverSubnetIds.add(subnet.getSubnetId());
+        }
         InfrastructureData infrastructureData = InfrastructureData.Builder.create()
                 .withRegion("US-EAST-2")
                 .withServerDatabaseName(serverTable.getTableName())
                 .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
                 .withServerVpcId(serverVpc.getVpcId())
+                .withServerSubnetIds(serverSubnetIds)
                 .build();
         Map<String, String> infrastructureDataMap = infrastructureData.convertToMap();
 
