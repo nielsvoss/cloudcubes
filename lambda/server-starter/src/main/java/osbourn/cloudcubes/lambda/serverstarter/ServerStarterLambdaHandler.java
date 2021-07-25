@@ -1,6 +1,5 @@
 package osbourn.cloudcubes.lambda.serverstarter;
 
-import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -19,11 +18,10 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
 
         InfrastructureData infrastructureData = InfrastructureData.fromEnvironment();
         InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureData);
-        Table serverTable = infrastructureConstructor.getServerTable();
-        Server server = Server.fromId(1, serverTable);
+        Server server = Server.fromId(1, infrastructureConstructor.getDynamoDBClient(), infrastructureData.getServerDataBaseName());
         ServerInstance serverInstance = new ServerInstance(
                 server,
-                infrastructureConstructor.getAmazonEC2(),
+                infrastructureConstructor.ec2Client(),
                 infrastructureData.getServerSubnetIds().get(0),
                 infrastructureData.getServerSecurityGroupName()
         );
