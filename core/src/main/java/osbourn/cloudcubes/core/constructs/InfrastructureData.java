@@ -1,7 +1,6 @@
 package osbourn.cloudcubes.core.constructs;
 
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class InfrastructureData {
             String serverVpcId,
             List<String> serverSubnetIds
     ) {
-        this.region = Region.getRegion(Regions.fromName(region.toLowerCase().replace('_', '-')));
+        this.region = Region.of(region.toLowerCase().replace('_', '-'));
         this.serverDataBaseName = serverDataBaseName;
         this.serverSecurityGroupName = serverSecurityGroupName;
         this.serverVpcId = serverVpcId;
@@ -64,7 +63,7 @@ public class InfrastructureData {
 
     public HashMap<String, String> convertToMap() {
         HashMap<String, String> outputMap = new HashMap<>();
-        outputMap.put("CLOUDCUBESREGION", region.getName());
+        outputMap.put("CLOUDCUBESREGION", region.id());
         outputMap.put("CLOUDCUBESSERVERDATABASENAME", serverDataBaseName);
         outputMap.put("CLOUDCUBESSERVERSECURITYGROUPNAME", serverSecurityGroupName);
         outputMap.put("CLOUDCUBESSERVERVPCID", serverVpcId);

@@ -1,12 +1,8 @@
 package osbourn.cloudcubes.core.constructs;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
-import com.amazonaws.services.ec2.model.Vpc;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.ec2.model.Vpc;
 
 /**
  * Retrieves information from an InfrastructureData object and generates AWS SDK objects.
@@ -15,10 +11,8 @@ import com.amazonaws.services.ec2.model.Vpc;
 public class InfrastructureConstructor {
     private final InfrastructureData infrastructureData;
 
-    private AmazonDynamoDB amazonDynamoDB = null;
-    private DynamoDB dynamoDB = null;
-    private Table serverTable = null;
-    private AmazonEC2 amazonEC2 = null;
+    private DynamoDbClient dynamoDBClient = null;
+    private Ec2Client ec2Client = null;
     private Vpc serverVpc = null;
 
     /**
@@ -39,41 +33,23 @@ public class InfrastructureConstructor {
         return infrastructureData;
     }
 
-    public AmazonDynamoDB getAmazonDynamoDB() {
-        if (amazonDynamoDB == null) {
-            amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                    .withRegion(infrastructureData.getRegion().getName())
-                    .build();
+    public DynamoDbClient getDynamoDBClient() {
+        if (dynamoDBClient == null) {
+            dynamoDBClient = DynamoDbClient.builder().region(infrastructureData.getRegion()).build();
         }
-        return amazonDynamoDB;
+        return dynamoDBClient;
     }
 
-    public DynamoDB getDynamoDB() {
-        if (dynamoDB == null) {
-            dynamoDB = new DynamoDB(getAmazonDynamoDB());
+    public Ec2Client ec2Client() {
+        if (ec2Client == null) {
+            ec2Client = Ec2Client.builder().region(infrastructureData.getRegion()).build();
         }
-        return dynamoDB;
-    }
-
-    public Table getServerTable() {
-        if (serverTable == null) {
-            serverTable = getDynamoDB().getTable(infrastructureData.getServerDataBaseName());
-        }
-        return serverTable;
-    }
-
-    public AmazonEC2 getAmazonEC2() {
-        if (amazonEC2 == null) {
-            amazonEC2 = AmazonEC2ClientBuilder.standard()
-                    .withRegion(infrastructureData.getRegion().getName())
-                    .build();
-        }
-        return amazonEC2;
+        return ec2Client;
     }
 
     public Vpc getServerVpc() {
         if (serverVpc == null) {
-            serverVpc = new Vpc().withVpcId(infrastructureData.getServerVpcId());
+            serverVpc = Vpc.builder().vpcId(infrastructureData.getServerVpcId()).build();
         }
         return serverVpc;
     }
