@@ -24,7 +24,9 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
         ServerInstance serverInstance = new ServerInstance(
                 server,
                 infrastructureConstructor.getAmazonEC2(),
-                infrastructureData.getServerSecurityGroupName());
+                infrastructureData.getServerSubnetIds().get(0),
+                infrastructureData.getServerSecurityGroupName()
+        );
         serverInstance.startServer();
 
         return response;

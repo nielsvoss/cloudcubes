@@ -12,11 +12,13 @@ import java.util.List;
 public class ServerInstance {
     private final Server server;
     private final AmazonEC2 ec2;
+    private final String subnetId;
     private final String serverSecurityGroup;
 
-    public ServerInstance(Server server, AmazonEC2 ec2, String serverSecurityGroup) {
+    public ServerInstance(Server server, AmazonEC2 ec2, String subnetId, String serverSecurityGroup) {
         this.server = server;
         this.ec2 = ec2;
+        this.subnetId = subnetId;
         this.serverSecurityGroup = serverSecurityGroup;
     }
 
@@ -112,6 +114,7 @@ public class ServerInstance {
         LaunchSpecification launchSpecification = new LaunchSpecification()
                 .withImageId(amazonLinux2AmiId)
                 .withInstanceType(InstanceType.M5Large)
+                .withSubnetId(subnetId)
                 .withSecurityGroups(serverSecurityGroup);
         RequestSpotInstancesRequest spotInstancesRequest = new RequestSpotInstancesRequest()
                 .withInstanceCount(1)
