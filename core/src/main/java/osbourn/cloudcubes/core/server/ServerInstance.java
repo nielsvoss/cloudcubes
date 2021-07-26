@@ -99,7 +99,7 @@ public class ServerInstance {
     }
 
     public void startServer() {
-        final String amazonLinux2AmiId = "ami-0277b52859bac6f4b";
+        final String amazonLinux2AmiId = "ami-0233c2d874b811deb";
 
         if (isServerOnline()) {
             throw new IllegalStateException("The server is currently online");
@@ -114,6 +114,7 @@ public class ServerInstance {
         RequestSpotLaunchSpecification launchSpecification = RequestSpotLaunchSpecification.builder()
                 .instanceType(InstanceType.M5_LARGE)
                 .subnetId(subnetId)
+                .imageId(amazonLinux2AmiId)
                 .build();
         RequestSpotInstancesRequest spotInstancesRequest = RequestSpotInstancesRequest.builder()
                 .instanceCount(1)
