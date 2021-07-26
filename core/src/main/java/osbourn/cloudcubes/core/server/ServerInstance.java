@@ -1,9 +1,13 @@
 package osbourn.cloudcubes.core.server;
 
+import osbourn.cloudcubes.core.constructs.InfrastructureData;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.*;
 
+import java.util.Base64;
+import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an EC2 instance that corresponds to a Server object.
@@ -12,12 +16,15 @@ import java.util.List;
 public class ServerInstance {
     private final Server server;
     private final Ec2Client ec2Client;
+    private final InfrastructureData infrastructureData;
     private final String subnetId;
     private final String serverSecurityGroup;
+    private String userData = null;
 
-    public ServerInstance(Server server, Ec2Client ec2Client, String subnetId, String serverSecurityGroup) {
+    public ServerInstance(Server server, Ec2Client ec2Client, InfrastructureData infrastructureData, String subnetId, String serverSecurityGroup) {
         this.server = server;
         this.ec2Client = ec2Client;
+        this.infrastructureData = infrastructureData;
         this.subnetId = subnetId;
         this.serverSecurityGroup = serverSecurityGroup;
     }
@@ -116,6 +123,7 @@ public class ServerInstance {
                 .subnetId(subnetId)
                 .imageId(amazonLinux2AmiId)
                 .securityGroupIds(serverSecurityGroup)
+                .userData(Base64.getEncoder().encodeToString(getUserData().getBytes()))
                 .build();
         RequestSpotInstancesRequest spotInstancesRequest = RequestSpotInstancesRequest.builder()
                 .instanceCount(1)
@@ -143,5 +151,44 @@ public class ServerInstance {
     public boolean isServerOnline() {
         // TODO: Verify the server state if the server state is UNKNOWN
         return getServerState() == ServerState.ONLINE;
+    }
+
+    /**
+     * Generates the user data for an EC2 instance. User data is a series of (usually shell) commands that will be run
+     * from the root account as soon as the instance starts up. Note that you will probably need to convert the output
+     * of this method to base64 before using it.
+     *
+     * @return The generated user data
+     */
+    private String getUserData() {
+        if (userData == null) {
+            // Strings not matching this regex may contain values that are not interpreted literally by bash
+            // (i.e. they need to be escaped)
+            final String allowedCharactersPattern = "^[a-zA-Z0-9,._+:@%/-]+$";
+
+            String resourceBucketName = infrastructureData.getResourceBucketName();
+            if (!resourceBucketName.matches(allowedCharactersPattern)) {
+                throw new IllegalStateException(
+                        "The resource bucket name stored inside the provided infrastructure data contains invalid characters");
+            }
+
+            StringBuilder builder = new StringBuilder();
+            // Lets server know that the remaining commands should be run with bash
+            builder.append("#!/bin/bash\n");
+            builder.append("cd /home/ec2-user\n");
+            // Set environment variables to the values in infrastructureData
+            for (Map.Entry<String, String> entry : infrastructureData.convertToMap().entrySet()) {
+                if (!entry.getKey().matches(allowedCharactersPattern) || !entry.getValue().matches(allowedCharactersPattern)) {
+                    // TODO: Log warning
+                    continue;
+                }
+                builder.append(String.format("export %s=%s\n", entry.getKey(), entry.getValue()));
+            }
+            // Download and invoke script (the hyphen at the end of the s3 command tells it to print to stdout)
+            String s3command = "aws s3 cp s3://" + resourceBucketName + "/server-startup/startup.sh -";
+            builder.append("su -c 'curl ").append(s3command).append(" | bash' ec2-user\n");
+            userData = builder.toString();
+        }
+        return userData;
     }
 }

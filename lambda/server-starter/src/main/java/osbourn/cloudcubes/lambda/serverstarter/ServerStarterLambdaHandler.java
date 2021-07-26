@@ -22,6 +22,7 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
         ServerInstance serverInstance = new ServerInstance(
                 server,
                 infrastructureConstructor.getEc2Client(),
+                infrastructureData,
                 infrastructureData.getServerSubnetIds().get(0),
                 infrastructureData.getServerSecurityGroupName()
         );
