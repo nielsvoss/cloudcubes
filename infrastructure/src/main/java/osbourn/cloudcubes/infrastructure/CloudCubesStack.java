@@ -12,6 +12,8 @@ import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.ec2.*;
 import software.amazon.awscdk.services.iam.Effect;
 import software.amazon.awscdk.services.iam.PolicyStatement;
+import software.amazon.awscdk.services.iam.Role;
+import software.amazon.awscdk.services.iam.ServicePrincipal;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
@@ -68,6 +70,14 @@ public class CloudCubesStack extends Stack {
         connections.allowFromAnyIpv4(Port.tcp(minecraftPort), "Allow TCP access to the Minecraft Server");
         connections.allowFromAnyIpv4(Port.udp(minecraftPort), "Allow UDP access to the Minecraft Server");
         connections.allowFromAnyIpv4(Port.tcp(sshPort), "Allows TCP access through SSH");
+
+        // IAM Role for EC2 instances
+        Role serverRole = Role.Builder.create(this, "ServerRole")
+                .description("Grants EC2 instances permission to access resources from the Cloudcubes stack")
+                .assumedBy(ServicePrincipal.Builder.create("ec2.amazonaws.com").build())
+                .build();
+        serverTable.grantReadWriteData(serverRole);
+        resourceBucket.grantRead(serverRole);
 
         // Create InfrastructureData object to determine environment variables for the lambda functions
         List<String> serverSubnetIds = new ArrayList<>();
