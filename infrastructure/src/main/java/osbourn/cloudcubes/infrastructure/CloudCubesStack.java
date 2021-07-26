@@ -15,11 +15,11 @@ import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.s3.Bucket;
+import software.amazon.awscdk.services.s3.deployment.BucketDeployment;
+import software.amazon.awscdk.services.s3.deployment.Source;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CloudCubesStack extends Stack {
     public CloudCubesStack(final Construct parent, final String name) {
@@ -34,6 +34,16 @@ public class CloudCubesStack extends Stack {
                 .removalPolicy(RemovalPolicy.RETAIN)
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .partitionKey(serverTablePartitionKey)
+                .build();
+
+        // Resources bucket: the contents of the resources folder will be made available as an S3 bucket
+        Bucket resourceBucket = Bucket.Builder.create(this, "ResourceBucket")
+                .removalPolicy(RemovalPolicy.DESTROY)
+                .autoDeleteObjects(true)
+                .build();
+        BucketDeployment resourceBucketDeployment = BucketDeployment.Builder.create(this, "ResourceBucketDeployment")
+                .destinationBucket(resourceBucket)
+                .sources(Collections.singletonList(Source.asset("./resources")))
                 .build();
 
         // Create VPC

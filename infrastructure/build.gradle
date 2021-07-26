@@ -12,6 +12,8 @@ dependencies {
     implementation "software.amazon.awscdk:dynamodb:${CDK_VERSION}"
     implementation "software.amazon.awscdk:lambda:${CDK_VERSION}"
     implementation "software.amazon.awscdk:ec2:${CDK_VERSION}"
+    implementation "software.amazon.awscdk:s3:${CDK_VERSION}"
+    implementation "software.amazon.awscdk:s3-deployment:${CDK_VERSION}"
 }
 
 application {
