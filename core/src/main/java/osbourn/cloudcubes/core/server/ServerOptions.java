@@ -7,6 +7,7 @@ package osbourn.cloudcubes.core.server;
  */
 public class ServerOptions {
     private final Server server;
+
     public ServerOptions(Server server) {
         this.server = server;
     }

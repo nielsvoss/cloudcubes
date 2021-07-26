@@ -20,7 +20,7 @@ allprojects {
     version = rootProject.version
 }
 
-task synth(type:Exec) {
+task synth(type: Exec) {
     group 'cdk'
     dependsOn tasks.build
     if (OperatingSystem.current().isWindows()) {
@@ -31,7 +31,7 @@ task synth(type:Exec) {
     args 'synth'
 }
 
-task deploy(type:Exec) {
+task deploy(type: Exec) {
     group 'cdk'
     dependsOn tasks.synth
     if (OperatingSystem.current().isWindows()) {

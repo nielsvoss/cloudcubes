@@ -22,23 +22,6 @@ public class ServerInstance {
         this.serverSecurityGroup = serverSecurityGroup;
     }
 
-    private void setServerState(ServerState serverState) {
-        String serverStateAsString;
-        switch (serverState) {
-            case OFFLINE:
-                serverStateAsString = "OFFLINE";
-                break;
-            case ONLINE:
-                serverStateAsString = "ONLINE";
-                break;
-            case UNKNOWN:
-            default:
-                serverStateAsString = "UNKNOWN";
-                break;
-        }
-        server.setStringValue("ServerState", serverStateAsString);
-    }
-
     /**
      * Gets the Server object used to construct this class.
      *
@@ -96,6 +79,23 @@ public class ServerInstance {
                 // TODO Throw exception or log warning
                 return ServerState.UNKNOWN;
         }
+    }
+
+    private void setServerState(ServerState serverState) {
+        String serverStateAsString;
+        switch (serverState) {
+            case OFFLINE:
+                serverStateAsString = "OFFLINE";
+                break;
+            case ONLINE:
+                serverStateAsString = "ONLINE";
+                break;
+            case UNKNOWN:
+            default:
+                serverStateAsString = "UNKNOWN";
+                break;
+        }
+        server.setStringValue("ServerState", serverStateAsString);
     }
 
     public void startServer() {

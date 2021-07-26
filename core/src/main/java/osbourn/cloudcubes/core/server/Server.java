@@ -12,21 +12,31 @@ import java.util.Map;
  * In most situations, the database values will be set using helper classes such as {@link ServerOptions}.
  */
 public class Server {
+    public final int id;
     private final DynamoDbClient dynamoDbClient;
     private final String tableName;
-
     /**
      * Contains a local cache of values the user requested from the database.
      * Format for each entry is ("nameOfKey", "valueInDatabase")
      */
     private final Map<String, String> stringValueCache = new HashMap<>();
 
-    public final int id;
-
     private Server(int id, DynamoDbClient dynamoDbClient, String tableName) {
         this.id = id;
         this.dynamoDbClient = dynamoDbClient;
         this.tableName = tableName;
+    }
+
+    /**
+     * Creates a new Server object that corresponds to the object with the given id in the server database.
+     *
+     * @param id             The id of the server in the server database
+     * @param dynamoDbClient The DynamoDB client used to make requests
+     * @param tableName      The name of the database table
+     * @return The server object that was just created
+     */
+    public static Server fromId(int id, DynamoDbClient dynamoDbClient, String tableName) {
+        return new Server(id, dynamoDbClient, tableName);
     }
 
     /**
@@ -72,7 +82,7 @@ public class Server {
      *
      * @param valueToGet The key of the value in the database
      * @return The value in the database, or null if it does not exist.
-     * @see #getStringValue(String) 
+     * @see #getStringValue(String)
      */
     public String requestStringValueFromDatabase(String valueToGet) {
         // Used to let AWS know that we want to get values from the item that has "Id" set to this.id
@@ -87,7 +97,7 @@ public class Server {
                 .tableName(this.tableName)
                 .projectionExpression(valueToGet)
                 .build();
-        Map<String,AttributeValue> returnedItem = dynamoDbClient.getItem(request).item();
+        Map<String, AttributeValue> returnedItem = dynamoDbClient.getItem(request).item();
 
         // Request value from database
         String value = returnedItem.get(valueToGet).s();
@@ -119,18 +129,5 @@ public class Server {
 
         // Cache new value
         stringValueCache.put(key, value);
-    }
-
-    /**
-     * Creates a new Server object that corresponds to the object with the given id in the server database.
-     *
-     * @param id The id of the server in the server database
-     * @param dynamoDbClient The DynamoDB client used to make requests
-     * @param tableName The name of the database table
-     *
-     * @return The server object that was just created
-     */
-    public static Server fromId(int id, DynamoDbClient dynamoDbClient, String tableName) {
-        return new Server(id, dynamoDbClient, tableName);
     }
 }

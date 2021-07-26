@@ -41,6 +41,30 @@ public class InfrastructureData {
         this.serverSubnetIds = serverSubnetIds;
     }
 
+    /**
+     * Generates an InfrastructureData object from environment variables
+     *
+     * @return The InfrastructureData object just generated
+     */
+    public static InfrastructureData fromEnvironment() {
+        String region = System.getenv("CLOUDCUBESREGION");
+        String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
+        String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
+        String serverVpcId = System.getenv("CLOUDCUBESSERVERVPCID");
+        String serverSubnetIdsAsString = System.getenv("CLOUDCUBESSERVERSUBNETIDS");
+        List<String> serverSubnetIds = Arrays.asList(serverSubnetIdsAsString.split(","));
+        assert region != null;
+        assert serverDataBaseName != null;
+        assert serverSecurityGroupName != null;
+        return new InfrastructureData(
+                region,
+                serverDataBaseName,
+                serverSecurityGroupName,
+                serverVpcId,
+                serverSubnetIds
+        );
+    }
+
     public Region getRegion() {
         return region;
     }
@@ -73,30 +97,6 @@ public class InfrastructureData {
     }
 
     /**
-     * Generates an InfrastructureData object from environment variables
-     *
-     * @return The InfrastructureData object just generated
-     */
-    public static InfrastructureData fromEnvironment() {
-        String region = System.getenv("CLOUDCUBESREGION");
-        String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
-        String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
-        String serverVpcId = System.getenv("CLOUDCUBESSERVERVPCID");
-        String serverSubnetIdsAsString = System.getenv("CLOUDCUBESSERVERSUBNETIDS");
-        List<String> serverSubnetIds = Arrays.asList(serverSubnetIdsAsString.split(","));
-        assert region != null;
-        assert serverDataBaseName != null;
-        assert serverSecurityGroupName != null;
-        return new InfrastructureData(
-                region,
-                serverDataBaseName,
-                serverSecurityGroupName,
-                serverVpcId,
-                serverSubnetIds
-        );
-    }
-
-    /**
      * A helper class used to construct a InfrastructureData object. This class exists because objects of type
      * InfrastructureData cannot be modified. This class allows constructing an InfrastructureData object in parts,
      * allowing this job to be offloaded to different parts of the code and only constructed when finished.
@@ -108,7 +108,8 @@ public class InfrastructureData {
         private String serverVpcId = null;
         private List<String> serverSubnetIds = null;
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public static Builder create() {
             return new Builder();
