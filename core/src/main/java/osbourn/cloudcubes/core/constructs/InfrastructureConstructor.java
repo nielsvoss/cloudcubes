@@ -40,7 +40,7 @@ public class InfrastructureConstructor {
         return dynamoDBClient;
     }
 
-    public Ec2Client ec2Client() {
+    public Ec2Client getEc2Client() {
         if (ec2Client == null) {
             ec2Client = Ec2Client.builder().region(infrastructureData.getRegion()).build();
         }

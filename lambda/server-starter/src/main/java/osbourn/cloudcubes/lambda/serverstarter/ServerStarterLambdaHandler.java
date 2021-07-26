@@ -21,7 +21,7 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
         Server server = Server.fromId(1, infrastructureConstructor.getDynamoDBClient(), infrastructureData.getServerDataBaseName());
         ServerInstance serverInstance = new ServerInstance(
                 server,
-                infrastructureConstructor.ec2Client(),
+                infrastructureConstructor.getEc2Client(),
                 infrastructureData.getServerSubnetIds().get(0),
                 infrastructureData.getServerSecurityGroupName()
         );
