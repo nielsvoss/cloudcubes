@@ -30,21 +30,6 @@ public class Server {
     }
 
     /**
-     * Some values, such as the server display name and the EC2InstanceId are likely to be used by the program.
-     * This method caches those values so they don't need to be retrieved later.
-     * This method is primarily intended to be used in {@link #fromId(int, Table)}.
-     */
-    private void cacheInitialValues() {
-        // The output of this method call can be ignored because we only care about caching the values
-        requestStringValuesFromDatabase(
-                "DisplayName",
-                "EC2InstanceId",
-                "EC2SpotRequestId",
-                "ServerState"
-        );
-    }
-
-    /**
      * <p>
      * Gets a value associated with a key from the database, assuming the value is a String.
      * For example, calling this method with the argument "DisplayName" would read the database for that value and
@@ -110,62 +95,6 @@ public class Server {
         return value;
     }
 
-    /**
-     * <p>
-     * Gets multiple values from the database. This functions similar to {@link #requestStringValueFromDatabase(String)}
-     * but allows you to request multiple values at one time. This function may be slightly more efficient than calling
-     * requestStringValueFromDatabase multiple times.
-     * </p>
-     *
-     * <p>
-     * The entries in the array this method returns correspond in position to the entries in the 'valuesToGet' parameter.
-     * For example:
-     * <pre>{@code
-     * String displayName = requestStringValueFromDatabase("DisplayName");
-     * String EC2InstanceId = requestStringValueFromDatabase("EC2InstanceId");
-     * String EC2SpotRequestId = requestStringValueFromDatabase("EC2SpotRequestId");
-     * }</pre>
-     * can be replaced with
-     * <pre>{@code
-     * String[] values = requestStringValuesFromDatabase("DisplayName", "EC2InstanceId", "EC2SpotRequestId");
-     * String displayName = values[0];
-     * String EC2InstanceId = values[1];
-     * String EC2SpotRequestId = values[2];
-     * }</pre>
-     * </p>
-     *
-     * @param valuesToGet The keys of the values you want to request
-     * @return An array of the values you requested. An entry in the array may be null if the value did not exist.
-     */
-    public String[] requestStringValuesFromDatabase(String... valuesToGet) {
-        if (valuesToGet.length == 0) {
-            throw new IllegalArgumentException("Must request at least one value");
-        }
-
-        // Used to let AWS know that we want to get values from the item that has "Id" set to this.id
-        Map<String, AttributeValue> keyToGet = new HashMap<>();
-        keyToGet.put("Id", AttributeValue.builder()
-                .n(Integer.toString(this.id))
-                .build());
-
-        // Request item
-        GetItemRequest request = GetItemRequest.builder()
-                .key(keyToGet)
-                .tableName(this.tableName)
-                .attributesToGet(valuesToGet)
-                .build();
-        Map<String,AttributeValue> returnedItem = dynamoDbClient.getItem(request).item();
-
-        // Get values from 'item' variable
-        String[] values = new String[valuesToGet.length];
-        for (int i = 0; i < valuesToGet.length; i++) {
-            String value = returnedItem.get(valuesToGet[i]).s();
-            stringValueCache.put(valuesToGet[i], value);
-            values[i] = value;
-        }
-        return values;
-    }
-
     public void setStringValue(String key, String value) {
         // Used to let AWS know that we want to set values for the item that has "Id" set to this.id
         Map<String, AttributeValue> itemKey = new HashMap<>();
@@ -193,7 +122,7 @@ public class Server {
     }
 
     /**
-     * Creates a new server object by downloading the entry that corresponds to 'id' from the server database.
+     * Creates a new Server object that corresponds to the object with the given id in the server database.
      *
      * @param id The id of the server in the server database
      * @param dynamoDbClient The DynamoDB client used to make requests
@@ -202,8 +131,6 @@ public class Server {
      * @return The server object that was just created
      */
     public static Server fromId(int id, DynamoDbClient dynamoDbClient, String tableName) {
-        Server server = new Server(id, dynamoDbClient, tableName);
-        server.cacheInitialValues();
-        return server;
+        return new Server(id, dynamoDbClient, tableName);
     }
 }
