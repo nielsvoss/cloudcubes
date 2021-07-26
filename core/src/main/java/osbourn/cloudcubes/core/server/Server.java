@@ -85,12 +85,12 @@ public class Server {
         GetItemRequest request = GetItemRequest.builder()
                 .key(keyToGet)
                 .tableName(this.tableName)
-                .projectionExpression(":v = " + valueToGet)
+                .projectionExpression(valueToGet)
                 .build();
         Map<String,AttributeValue> returnedItem = dynamoDbClient.getItem(request).item();
 
         // Request value from database
-        String value = returnedItem.get(":v").s();
+        String value = returnedItem.get(valueToGet).s();
         stringValueCache.put(valueToGet, value);
         return value;
     }
