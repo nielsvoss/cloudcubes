@@ -23,6 +23,7 @@ import java.util.List;
 public class InfrastructureData {
     private final Region region;
     private final String serverDataBaseName;
+    private final String resourceBucketName;
     private final String serverSecurityGroupName;
     private final String serverVpcId;
     private final List<String> serverSubnetIds;
@@ -30,12 +31,14 @@ public class InfrastructureData {
     public InfrastructureData(
             String region,
             String serverDataBaseName,
+            String resourceBucketName,
             String serverSecurityGroupName,
             String serverVpcId,
             List<String> serverSubnetIds
     ) {
         this.region = Region.of(region.toLowerCase().replace('_', '-'));
         this.serverDataBaseName = serverDataBaseName;
+        this.resourceBucketName = resourceBucketName;
         this.serverSecurityGroupName = serverSecurityGroupName;
         this.serverVpcId = serverVpcId;
         this.serverSubnetIds = serverSubnetIds;
@@ -49,6 +52,7 @@ public class InfrastructureData {
     public static InfrastructureData fromEnvironment() {
         String region = System.getenv("CLOUDCUBESREGION");
         String serverDataBaseName = System.getenv("CLOUDCUBESSERVERDATABASENAME");
+        String resourceBucketName = System.getenv("CLOUDCUBESRESOURCEBUCKETNAME");
         String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
         String serverVpcId = System.getenv("CLOUDCUBESSERVERVPCID");
         String serverSubnetIdsAsString = System.getenv("CLOUDCUBESSERVERSUBNETIDS");
@@ -59,6 +63,7 @@ public class InfrastructureData {
         return new InfrastructureData(
                 region,
                 serverDataBaseName,
+                resourceBucketName,
                 serverSecurityGroupName,
                 serverVpcId,
                 serverSubnetIds
@@ -71,6 +76,10 @@ public class InfrastructureData {
 
     public String getServerDataBaseName() {
         return serverDataBaseName;
+    }
+
+    public String getResourceBucketName() {
+        return resourceBucketName;
     }
 
     public String getServerSecurityGroupName() {
@@ -89,6 +98,7 @@ public class InfrastructureData {
         HashMap<String, String> outputMap = new HashMap<>();
         outputMap.put("CLOUDCUBESREGION", region.id());
         outputMap.put("CLOUDCUBESSERVERDATABASENAME", serverDataBaseName);
+        outputMap.put("CLOUDCUBESRESOURCEBUCKETNAME", resourceBucketName);
         outputMap.put("CLOUDCUBESSERVERSECURITYGROUPNAME", serverSecurityGroupName);
         outputMap.put("CLOUDCUBESSERVERVPCID", serverVpcId);
         String serverSubnetIdsAsString = String.join(",", serverSubnetIds);
@@ -104,6 +114,7 @@ public class InfrastructureData {
     public static class Builder {
         private String region = null;
         private String serverDataBaseName = null;
+        private String resourceBucketName = null;
         private String serverSecurityGroupName = null;
         private String serverVpcId = null;
         private List<String> serverSubnetIds = null;
@@ -138,6 +149,19 @@ public class InfrastructureData {
 
         public Builder withServerDatabaseName(String serverDataBaseName) {
             setServerDataBaseName(serverDataBaseName);
+            return this;
+        }
+
+        public String getResourceBucketName() {
+            return resourceBucketName;
+        }
+
+        public void setResourceBucketName(String resourceBucketName) {
+            this.resourceBucketName = resourceBucketName;
+        }
+
+        public Builder withResourceBucketName(String resourceBucketName) {
+            setResourceBucketName(resourceBucketName);
             return this;
         }
 
@@ -188,6 +212,7 @@ public class InfrastructureData {
         public boolean canBeConstructed() {
             return region != null
                     && serverDataBaseName != null
+                    && resourceBucketName != null
                     && serverSecurityGroupName != null
                     && serverVpcId != null
                     && serverSubnetIds != null;
@@ -206,6 +231,7 @@ public class InfrastructureData {
             return new InfrastructureData(
                     region,
                     serverDataBaseName,
+                    resourceBucketName,
                     serverSecurityGroupName,
                     serverVpcId,
                     serverSubnetIds

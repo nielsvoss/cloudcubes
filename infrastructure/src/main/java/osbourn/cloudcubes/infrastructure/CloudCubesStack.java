@@ -77,6 +77,7 @@ public class CloudCubesStack extends Stack {
         InfrastructureData infrastructureData = InfrastructureData.Builder.create()
                 .withRegion("US-EAST-2")
                 .withServerDatabaseName(serverTable.getTableName())
+                .withResourceBucketName(resourceBucket.getBucketName())
                 .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
                 .withServerVpcId(serverVpc.getVpcId())
                 .withServerSubnetIds(serverSubnetIds)
