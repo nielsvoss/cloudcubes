@@ -115,6 +115,7 @@ public class ServerInstance {
                 .instanceType(InstanceType.M5_LARGE)
                 .subnetId(subnetId)
                 .imageId(amazonLinux2AmiId)
+                .securityGroupIds(serverSecurityGroup)
                 .build();
         RequestSpotInstancesRequest spotInstancesRequest = RequestSpotInstancesRequest.builder()
                 .instanceCount(1)
