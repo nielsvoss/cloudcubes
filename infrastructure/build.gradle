@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-def CDK_VERSION = '1.98.0'
+def CDK_VERSION = '1.115.0'
 
 dependencies {
     implementation project(":core")
