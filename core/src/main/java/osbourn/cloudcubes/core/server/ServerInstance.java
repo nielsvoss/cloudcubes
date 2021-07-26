@@ -1,7 +1,7 @@
 package osbourn.cloudcubes.core.server;
 
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.model.*;
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.ec2.model.*;
 
 import java.util.List;
 
@@ -11,13 +11,13 @@ import java.util.List;
  */
 public class ServerInstance {
     private final Server server;
-    private final AmazonEC2 ec2;
+    private final Ec2Client ec2Client;
     private final String subnetId;
     private final String serverSecurityGroup;
 
-    public ServerInstance(Server server, AmazonEC2 ec2, String subnetId, String serverSecurityGroup) {
+    public ServerInstance(Server server, Ec2Client ec2Client, String subnetId, String serverSecurityGroup) {
         this.server = server;
-        this.ec2 = ec2;
+        this.ec2Client = ec2Client;
         this.subnetId = subnetId;
         this.serverSecurityGroup = serverSecurityGroup;
     }
@@ -53,8 +53,8 @@ public class ServerInstance {
      *
      * @return The AmazonEC2 object used to construct this class.
      */
-    public AmazonEC2 getEC2() {
-        return ec2;
+    public Ec2Client getEC2() {
+        return ec2Client;
     }
 
     /**
@@ -111,20 +111,20 @@ public class ServerInstance {
         setServerState(ServerState.UNKNOWN);
 
         // Request EC2 Instance
-        LaunchSpecification launchSpecification = new LaunchSpecification()
-                .withImageId(amazonLinux2AmiId)
-                .withInstanceType(InstanceType.M5Large)
-                .withSubnetId(subnetId)
-                .withSecurityGroups(serverSecurityGroup);
-        RequestSpotInstancesRequest spotInstancesRequest = new RequestSpotInstancesRequest()
-                .withInstanceCount(1)
-                .withLaunchSpecification(launchSpecification);
-        RequestSpotInstancesResult requestResult = ec2.requestSpotInstances(spotInstancesRequest);
+        RequestSpotLaunchSpecification launchSpecification = RequestSpotLaunchSpecification.builder()
+                .instanceType(InstanceType.M5_LARGE)
+                .subnetId(subnetId)
+                .build();
+        RequestSpotInstancesRequest spotInstancesRequest = RequestSpotInstancesRequest.builder()
+                .instanceCount(1)
+                .launchSpecification(launchSpecification)
+                .build();
+        RequestSpotInstancesResponse requestResult = ec2Client.requestSpotInstances(spotInstancesRequest);
 
-        List<SpotInstanceRequest> requestResponses = requestResult.getSpotInstanceRequests();
+        List<SpotInstanceRequest> requestResponses = requestResult.spotInstanceRequests();
         // requestResponses should only contain one request
         assert requestResponses.size() == 1;
-        String spotInstanceId = requestResponses.get(0).getSpotInstanceRequestId();
+        String spotInstanceId = requestResponses.get(0).spotInstanceRequestId();
 
         // Update database with requestId
         server.setStringValue("EC2SpotRequestId", spotInstanceId);
