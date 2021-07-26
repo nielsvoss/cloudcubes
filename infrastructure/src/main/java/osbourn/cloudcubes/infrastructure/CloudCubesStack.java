@@ -88,6 +88,7 @@ public class CloudCubesStack extends Stack {
                 .withRegion("US-EAST-2")
                 .withServerDatabaseName(serverTable.getTableName())
                 .withResourceBucketName(resourceBucket.getBucketName())
+                .withServerRoleId(serverRole.getRoleId())
                 .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
                 .withServerVpcId(serverVpc.getVpcId())
                 .withServerSubnetIds(serverSubnetIds)
