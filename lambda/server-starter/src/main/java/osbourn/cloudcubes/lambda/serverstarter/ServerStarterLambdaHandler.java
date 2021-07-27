@@ -23,6 +23,7 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
                 server,
                 infrastructureConstructor.getEc2Client(),
                 infrastructureData,
+                infrastructureData.getServerInstanceProfileArn(),
                 infrastructureData.getServerSubnetIds().get(0),
                 infrastructureData.getServerSecurityGroupName()
         );

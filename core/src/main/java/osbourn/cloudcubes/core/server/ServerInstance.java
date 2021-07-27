@@ -5,7 +5,6 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.*;
 
 import java.util.Base64;
-import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,14 +16,21 @@ public class ServerInstance {
     private final Server server;
     private final Ec2Client ec2Client;
     private final InfrastructureData infrastructureData;
+    private final String serverInstanceProfileArn;
     private final String subnetId;
     private final String serverSecurityGroup;
     private String userData = null;
 
-    public ServerInstance(Server server, Ec2Client ec2Client, InfrastructureData infrastructureData, String subnetId, String serverSecurityGroup) {
+    public ServerInstance(Server server,
+                          Ec2Client ec2Client,
+                          InfrastructureData infrastructureData,
+                          String serverInstanceProfileArn,
+                          String subnetId,
+                          String serverSecurityGroup) {
         this.server = server;
         this.ec2Client = ec2Client;
         this.infrastructureData = infrastructureData;
+        this.serverInstanceProfileArn = serverInstanceProfileArn;
         this.subnetId = subnetId;
         this.serverSecurityGroup = serverSecurityGroup;
     }
@@ -39,12 +45,21 @@ public class ServerInstance {
     }
 
     /**
-     * Gets the AmazonEC2 object used to construct this class.
+     * Gets the Ec2Client object used to construct this class.
      *
-     * @return The AmazonEC2 object used to construct this class.
+     * @return The Ec2Client object used to construct this class.
      */
-    public Ec2Client getEC2() {
+    public Ec2Client getEC2Client() {
         return ec2Client;
+    }
+
+    /**
+     * Gets the InfrastructureData object used to construct this class.
+     *
+     * @return The InfrastructureData object used to construct this class.
+     */
+    public InfrastructureData infrastructureData() {
+        return infrastructureData;
     }
 
     /**
