@@ -10,10 +10,7 @@ import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
 import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.ec2.*;
-import software.amazon.awscdk.services.iam.Effect;
-import software.amazon.awscdk.services.iam.PolicyStatement;
-import software.amazon.awscdk.services.iam.Role;
-import software.amazon.awscdk.services.iam.ServicePrincipal;
+import software.amazon.awscdk.services.iam.*;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
@@ -78,6 +75,9 @@ public class CloudCubesStack extends Stack {
                 .build();
         serverTable.grantReadWriteData(serverRole);
         resourceBucket.grantRead(serverRole);
+        CfnInstanceProfile serverInstanceProfile = CfnInstanceProfile.Builder.create(this, "ServerInstanceProfile")
+                .roles(Collections.singletonList(serverRole.getRoleName()))
+                .build();
 
         // Create InfrastructureData object to determine environment variables for the lambda functions
         List<String> serverSubnetIds = new ArrayList<>();
