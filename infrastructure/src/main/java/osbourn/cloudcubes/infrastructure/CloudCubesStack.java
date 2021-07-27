@@ -18,10 +18,7 @@ import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.deployment.BucketDeployment;
 import software.amazon.awscdk.services.s3.deployment.Source;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CloudCubesStack extends Stack {
     public CloudCubesStack(final Construct parent, final String name) {
@@ -110,6 +107,12 @@ public class CloudCubesStack extends Stack {
                 .effect(Effect.ALLOW)
                 .resources(Collections.singletonList("*"))
                 .actions(Collections.singletonList("ec2:RequestSpotInstances"))
+                .build());
+        // serverStarter needs a special permission in order to launch servers with IAM roles
+        serverStarter.getRole().addToPrincipalPolicy(PolicyStatement.Builder.create()
+                .effect(Effect.ALLOW)
+                .resources(Collections.singletonList(serverRole.getRoleArn()))
+                .actions(Arrays.asList("iam:GetRole", "iam:PassRole"))
                 .build());
         serverTable.grantReadWriteData(serverStarter);
     }
