@@ -137,6 +137,7 @@ public class ServerInstance {
                 .instanceType(InstanceType.M5_LARGE)
                 .subnetId(subnetId)
                 .imageId(amazonLinux2AmiId)
+                .iamInstanceProfile(IamInstanceProfileSpecification.builder().arn(serverInstanceProfileArn).build())
                 .securityGroupIds(serverSecurityGroup)
                 .userData(Base64.getEncoder().encodeToString(getUserData().getBytes()))
                 .build();
