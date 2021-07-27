@@ -89,6 +89,7 @@ public class CloudCubesStack extends Stack {
                 .withServerDatabaseName(serverTable.getTableName())
                 .withResourceBucketName(resourceBucket.getBucketName())
                 .withServerRoleId(serverRole.getRoleId())
+                .withServerInstanceProfileArn(serverInstanceProfile.getAttrArn())
                 .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
                 .withServerVpcId(serverVpc.getVpcId())
                 .withServerSubnetIds(serverSubnetIds)
