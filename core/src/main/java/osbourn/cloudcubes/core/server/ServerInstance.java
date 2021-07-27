@@ -202,7 +202,7 @@ public class ServerInstance {
             }
             // Download and invoke script (the hyphen at the end of the s3 command tells it to print to stdout)
             String s3command = "aws s3 cp s3://" + resourceBucketName + "/server-startup/startup.sh -";
-            builder.append("su -c 'curl ").append(s3command).append(" | bash' ec2-user\n");
+            builder.append("su -c '").append(s3command).append(" | bash' ec2-user\n");
             userData = builder.toString();
         }
         return userData;
