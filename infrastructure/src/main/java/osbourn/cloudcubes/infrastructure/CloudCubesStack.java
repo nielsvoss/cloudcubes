@@ -70,6 +70,7 @@ public class CloudCubesStack extends Stack {
                 .description("Grants EC2 instances permission to access resources from the Cloudcubes stack")
                 .assumedBy(ServicePrincipal.Builder.create("ec2.amazonaws.com").build())
                 .build();
+        serverRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"));
         serverTable.grantReadWriteData(serverRole);
         resourceBucket.grantRead(serverRole);
         CfnInstanceProfile serverInstanceProfile = CfnInstanceProfile.Builder.create(this, "ServerInstanceProfile")
