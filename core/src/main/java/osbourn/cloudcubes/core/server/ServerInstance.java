@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents an EC2 instance that corresponds to a Server object.
+ * Represents an EC2 instance that corresponds to a ServerTableEntry object.
  * Can be online or offline.
  */
 public class ServerInstance {
-    private final Server server;
+    private final ServerTableEntry server;
     private final Ec2Client ec2Client;
     private final InfrastructureData infrastructureData;
     private final String serverInstanceProfileArn;
@@ -21,7 +21,7 @@ public class ServerInstance {
     private final String serverSecurityGroup;
     private String userData = null;
 
-    public ServerInstance(Server server,
+    public ServerInstance(ServerTableEntry server,
                           Ec2Client ec2Client,
                           InfrastructureData infrastructureData,
                           String serverInstanceProfileArn,
@@ -36,11 +36,11 @@ public class ServerInstance {
     }
 
     /**
-     * Gets the Server object used to construct this class.
+     * Gets the ServerTableEntry object used to construct this class.
      *
-     * @return The Server object used to construct this class.
+     * @return The ServerTableEntry object used to construct this class.
      */
-    public Server getServer() {
+    public ServerTableEntry getServer() {
         return server;
     }
 

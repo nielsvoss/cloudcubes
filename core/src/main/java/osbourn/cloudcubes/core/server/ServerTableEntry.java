@@ -11,7 +11,7 @@ import java.util.Map;
  * This class primarily acts as an interface to the DynamoDB table, allowing you to read and set values in the database.
  * In most situations, the database values will be set using helper classes such as {@link ServerOptions}.
  */
-public class Server {
+public class ServerTableEntry {
     public final int id;
     private final DynamoDbClient dynamoDbClient;
     private final String tableName;
@@ -21,22 +21,22 @@ public class Server {
      */
     private final Map<String, String> stringValueCache = new HashMap<>();
 
-    private Server(int id, DynamoDbClient dynamoDbClient, String tableName) {
+    private ServerTableEntry(int id, DynamoDbClient dynamoDbClient, String tableName) {
         this.id = id;
         this.dynamoDbClient = dynamoDbClient;
         this.tableName = tableName;
     }
 
     /**
-     * Creates a new Server object that corresponds to the object with the given id in the server database.
+     * Creates a new ServerTableEntry object that corresponds to the object with the given id in the server database.
      *
      * @param id             The id of the server in the server database
      * @param dynamoDbClient The DynamoDB client used to make requests
      * @param tableName      The name of the database table
      * @return The server object that was just created
      */
-    public static Server fromId(int id, DynamoDbClient dynamoDbClient, String tableName) {
-        return new Server(id, dynamoDbClient, tableName);
+    public static ServerTableEntry fromId(int id, DynamoDbClient dynamoDbClient, String tableName) {
+        return new ServerTableEntry(id, dynamoDbClient, tableName);
     }
 
     /**

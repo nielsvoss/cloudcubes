@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import osbourn.cloudcubes.core.constructs.InfrastructureConstructor;
 import osbourn.cloudcubes.core.constructs.InfrastructureData;
-import osbourn.cloudcubes.core.server.Server;
+import osbourn.cloudcubes.core.server.ServerTableEntry;
 import osbourn.cloudcubes.core.server.ServerInstance;
 
 import java.util.Map;
@@ -18,7 +18,7 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
 
         InfrastructureData infrastructureData = InfrastructureData.fromEnvironment();
         InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureData);
-        Server server = Server.fromId(1, infrastructureConstructor.getDynamoDBClient(), infrastructureData.getServerDataBaseName());
+        ServerTableEntry server = ServerTableEntry.fromId(1, infrastructureConstructor.getDynamoDBClient(), infrastructureData.getServerDataBaseName());
         ServerInstance serverInstance = new ServerInstance(
                 server,
                 infrastructureConstructor.getEc2Client(),
