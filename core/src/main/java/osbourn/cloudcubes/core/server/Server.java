@@ -29,4 +29,18 @@ public interface Server {
      * @throws java.lang.IllegalStateException If the server is currently online
      */
     void startServer();
+
+    /**
+     * Gets the display name of the server.
+     *
+     * @return The display name of the server
+     */
+    String getDisplayName();
+
+    /**
+     * Sets the display name of the server.
+     *
+     * @param displayName The new display name
+     */
+    void setDisplayName(String displayName);
 }

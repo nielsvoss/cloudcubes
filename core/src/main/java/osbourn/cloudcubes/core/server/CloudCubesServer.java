@@ -39,6 +39,16 @@ public class CloudCubesServer implements Server {
         serverInstance.startServer();
     }
 
+    @Override
+    public String getDisplayName() {
+        return serverOptions.getDisplayName();
+    }
+
+    @Override
+    public void setDisplayName(String displayName) {
+        serverOptions.setDisplayName(displayName);
+    }
+
     public static CloudCubesServer fromId(int id, InfrastructureData infrastructureData) {
         InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureData);
         ServerTableEntry serverTableEntry = ServerTableEntry.fromId(
