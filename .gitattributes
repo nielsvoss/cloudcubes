@@ -3,3 +3,5 @@
 #
 # These are explicitly windows files and should use crlf
 *.bat           text eol=crlf
+# Unix scripts should use lf line endings
+*.sh            text eol=lf
