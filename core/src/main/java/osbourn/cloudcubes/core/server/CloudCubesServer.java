@@ -34,6 +34,11 @@ public class CloudCubesServer implements Server {
         return null;
     }
 
+    @Override
+    public void startServer() {
+        serverInstance.startServer();
+    }
+
     public static CloudCubesServer fromId(int id, InfrastructureData infrastructureData) {
         InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureData);
         ServerTableEntry serverTableEntry = ServerTableEntry.fromId(

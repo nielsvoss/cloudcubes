@@ -21,4 +21,12 @@ public interface Server {
      * @return The state of the server
      */
     ServerState getServerState();
+
+    /**
+     * Launches the server if it is offline. If the server is not in an OFFLINE state, an IllegalStateException may be
+     * thrown.
+     *
+     * @throws java.lang.IllegalStateException If the server is currently online
+     */
+    void startServer();
 }
