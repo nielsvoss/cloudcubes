@@ -200,6 +200,7 @@ public class ServerInstance {
                 }
                 builder.append(String.format("export %s=%s\n", entry.getKey(), entry.getValue()));
             }
+            builder.append(String.format("export SERVER_ID=%d\n", server.id));
             // Download and invoke script (the hyphen at the end of the s3 command tells it to print to stdout)
             String s3command = "aws s3 cp s3://" + resourceBucketName + "/server-startup/startup.sh -";
             builder.append("su -c '").append(s3command).append(" | bash' ec2-user\n");
