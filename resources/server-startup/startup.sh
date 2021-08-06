@@ -30,6 +30,4 @@ printf '{"Id":{"N":"%s"}}\n' "$SERVER_ID" > startup/set-state-online-key.json
     --update-expression "SET #S = :s" \
     --expression-attribute-names file://startup/set-state-online-expression-attribute-names.json \
     --expression-attribute-values file://startup/set-state-online-expression-attribute-values.json \
-    --return-values NONE \
-    --return-consumed-capcity NONE \
-    --return-item-collection-metrics NONE
+    --return-values NONE
