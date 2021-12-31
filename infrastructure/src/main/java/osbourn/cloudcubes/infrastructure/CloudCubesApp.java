@@ -1,6 +1,6 @@
 package osbourn.cloudcubes.infrastructure;
 
-import software.amazon.awscdk.core.App;
+import software.amazon.awscdk.App;
 
 public class CloudCubesApp {
     public static void main(String[] args) {

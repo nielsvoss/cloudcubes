@@ -1,10 +1,10 @@
 package osbourn.cloudcubes.infrastructure;
 
 import osbourn.cloudcubes.core.constructs.InfrastructureData;
-import software.amazon.awscdk.core.Construct;
-import software.amazon.awscdk.core.Duration;
-import software.amazon.awscdk.core.RemovalPolicy;
-import software.amazon.awscdk.core.Stack;
+import software.constructs.Construct;
+import software.amazon.awscdk.Duration;
+import software.amazon.awscdk.RemovalPolicy;
+import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.services.dynamodb.Attribute;
 import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
@@ -88,7 +88,8 @@ public class CloudCubesStack extends Stack {
                 .withResourceBucketName(resourceBucket.getBucketName())
                 .withServerRoleId(serverRole.getRoleId())
                 .withServerInstanceProfileArn(serverInstanceProfile.getAttrArn())
-                .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupName())
+                // TODO Change code in core module to accept the id instead of the name
+                .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupId())
                 .withServerVpcId(serverVpc.getVpcId())
                 .withServerSubnetIds(serverSubnetIds)
                 .build();
