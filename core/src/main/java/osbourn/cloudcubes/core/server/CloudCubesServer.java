@@ -3,6 +3,7 @@ package osbourn.cloudcubes.core.server;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.constructs.InfrastructureConstructor;
+import osbourn.cloudcubes.core.database.ServerTableEntry;
 
 public class CloudCubesServer implements Server {
     private final int id;

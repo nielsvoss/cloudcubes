@@ -1,5 +1,7 @@
 package osbourn.cloudcubes.core.server;
 
+import osbourn.cloudcubes.core.database.ServerTableEntry;
+
 /**
  * Allows accessing common options in the server database such as the server's display name that are not related to
  * the server instance itself.

@@ -1,5 +1,6 @@
-package osbourn.cloudcubes.core.server;
+package osbourn.cloudcubes.core.database;
 
+import osbourn.cloudcubes.core.server.ServerOptions;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
