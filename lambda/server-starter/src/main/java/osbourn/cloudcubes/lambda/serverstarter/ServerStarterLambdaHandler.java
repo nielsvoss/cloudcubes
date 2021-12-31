@@ -16,7 +16,7 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
         String response = "200 OK";
 
         InfrastructureConfiguration infrastructureConfiguration = InfrastructureConfiguration.fromEnvironment();
-        Server server = CloudCubesServer.fromId(1, infrastructureConfiguration);
+        Server server = CloudCubesServer.fromId("1", infrastructureConfiguration);
         server.startServer();
 
         return response;

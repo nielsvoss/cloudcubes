@@ -23,7 +23,7 @@ rm -rf awscliv2
 
 # Update database with ONLINE state
 # See https://awscli.amazonaws.com/v2/documentation/api/latest/reference/dynamodb/update-item.html#examples
-printf '{"Id":{"N":"%s"}}\n' "$SERVER_ID" > startup/set-state-online-key.json
+printf '{"Id":{"S":"%s"}}\n' "$SERVER_ID" > startup/set-state-online-key.json
 /usr/local/bin/aws dynamodb update-item \
     --table-name "$CLOUDCUBESSERVERDATABASENAME" \
     --key file://startup/set-state-online-key.json \

@@ -28,7 +28,7 @@ public class CloudCubesStack extends Stack {
         // Create the DynamoDB table that stores the data for the servers
         Attribute serverTablePartitionKey = Attribute.builder()
                 .name("Id")
-                .type(AttributeType.NUMBER)
+                .type(AttributeType.STRING)
                 .build();
         Table serverTable = Table.Builder.create(this, "ServerTable")
                 .removalPolicy(RemovalPolicy.RETAIN)

@@ -13,7 +13,7 @@ import java.util.Map;
  * In most situations, the database values will be set using helper classes such as {@link ServerOptions}.
  */
 public class ServerTableEntry {
-    public final int id;
+    public final String id;
     private final DynamoDbClient dynamoDbClient;
     private final String tableName;
     /**
@@ -22,7 +22,7 @@ public class ServerTableEntry {
      */
     private final Map<String, String> stringValueCache = new HashMap<>();
 
-    private ServerTableEntry(int id, DynamoDbClient dynamoDbClient, String tableName) {
+    private ServerTableEntry(String id, DynamoDbClient dynamoDbClient, String tableName) {
         this.id = id;
         this.dynamoDbClient = dynamoDbClient;
         this.tableName = tableName;
@@ -36,7 +36,7 @@ public class ServerTableEntry {
      * @param tableName      The name of the database table
      * @return The server object that was just created
      */
-    public static ServerTableEntry fromId(int id, DynamoDbClient dynamoDbClient, String tableName) {
+    public static ServerTableEntry fromId(String id, DynamoDbClient dynamoDbClient, String tableName) {
         return new ServerTableEntry(id, dynamoDbClient, tableName);
     }
 
@@ -89,7 +89,7 @@ public class ServerTableEntry {
         // Used to let AWS know that we want to get values from the item that has "Id" set to this.id
         Map<String, AttributeValue> keyToGet = new HashMap<>();
         keyToGet.put("Id", AttributeValue.builder()
-                .n(Integer.toString(this.id))
+                .s(this.id)
                 .build());
 
         // Request item
@@ -110,7 +110,7 @@ public class ServerTableEntry {
         // Used to let AWS know that we want to set values for the item that has "Id" set to this.id
         Map<String, AttributeValue> itemKey = new HashMap<>();
         itemKey.put("Id", AttributeValue.builder()
-                .n(Integer.toString(this.id))
+                .s(this.id)
                 .build());
 
         // Tells AWS which value to update and what the new value is

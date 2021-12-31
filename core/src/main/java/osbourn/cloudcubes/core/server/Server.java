@@ -2,11 +2,11 @@ package osbourn.cloudcubes.core.server;
 
 public interface Server {
     /**
-     * Gets the numeric id of the server.
+     * Gets the id of the server.
      *
-     * @return The numeric id of the server.
+     * @return The id of the server.
      */
-    int getId();
+    String getId();
 
     /**
      * Gets the state of the server:
