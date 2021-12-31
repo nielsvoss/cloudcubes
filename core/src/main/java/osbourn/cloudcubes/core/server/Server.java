@@ -1,14 +1,17 @@
 package osbourn.cloudcubes.core.server;
 
+import org.jetbrains.annotations.NotNull;
+import osbourn.cloudcubes.core.util.Identifiable;
+
 import java.util.UUID;
 
-public interface Server {
+public interface Server extends Identifiable {
     /**
      * Gets the id of the server.
      *
      * @return The id of the server.
      */
-    UUID getId();
+    @NotNull UUID getId();
 
     /**
      * Gets the state of the server:

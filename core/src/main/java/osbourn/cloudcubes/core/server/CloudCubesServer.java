@@ -1,5 +1,6 @@
 package osbourn.cloudcubes.core.server;
 
+import org.jetbrains.annotations.NotNull;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.constructs.InfrastructureConstructor;
@@ -29,7 +30,7 @@ public class CloudCubesServer implements Server {
     }
 
     @Override
-    public UUID getId() {
+    public @NotNull UUID getId() {
         return id;
     }
 
