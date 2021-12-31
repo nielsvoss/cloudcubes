@@ -99,7 +99,7 @@ public class CloudCubesStack extends Stack {
         Function serverStarter = Function.Builder.create(this, "ServerStarter")
                 .code(Code.fromAsset("lambda/server-starter/build/libs/server-starter-all.jar"))
                 .handler("osbourn.cloudcubes.lambda.serverstarter.ServerStarterLambdaHandler")
-                .runtime(Runtime.JAVA_8)
+                .runtime(Runtime.JAVA_11)
                 .environment(infrastructureDataMap)
                 .timeout(Duration.seconds(30))
                 .memorySize(512)
