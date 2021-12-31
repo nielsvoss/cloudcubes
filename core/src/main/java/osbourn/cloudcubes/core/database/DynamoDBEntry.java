@@ -2,7 +2,6 @@ package osbourn.cloudcubes.core.database;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import osbourn.cloudcubes.core.server.ServerOptions;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
@@ -13,7 +12,6 @@ import java.util.UUID;
 /**
  * Represents a entry on the DynamoDB database.
  * This class primarily acts as an interface to the DynamoDB table, allowing you to read and set values in the database.
- * In most situations, the database values will be set using helper classes such as {@link ServerOptions}.
  */
 public class DynamoDBEntry implements DatabaseEntry {
     public final UUID id;
