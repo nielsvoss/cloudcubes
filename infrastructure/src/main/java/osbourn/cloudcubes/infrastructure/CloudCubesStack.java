@@ -78,7 +78,7 @@ public class CloudCubesStack extends Stack {
                 .roles(Collections.singletonList(serverRole.getRoleName()))
                 .build();
 
-        // Create InfrastructureData object to determine environment variables for the lambda functions
+        // Create InfrastructureConfiguration object to determine environment variables for the lambda functions
         List<String> serverSubnetIds = new ArrayList<>();
         for (ISubnet subnet : serverVpc.getPublicSubnets()) {
             serverSubnetIds.add(subnet.getSubnetId());

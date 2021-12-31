@@ -6,7 +6,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.Vpc;
 
 /**
- * Retrieves information from an InfrastructureData object and generates AWS SDK objects.
+ * Retrieves information from an InfrastructureConfiguration object and generates AWS SDK objects.
  * For example, it can return objects representing the DynamoDB Table where the server data is stored.
  */
 public class InfrastructureConstructor {
@@ -17,9 +17,9 @@ public class InfrastructureConstructor {
     private Vpc serverVpc = null;
 
     /**
-     * Generates an InfrastructureConstructor object from an InfrastructureData object.
+     * Generates an InfrastructureConstructor object from an InfrastructureConfiguration object.
      *
-     * @param infrastructureData The data to use when generating objects.
+     * @param infrastructureConfiguration The data to use when generating objects.
      */
     public InfrastructureConstructor(InfrastructureConfiguration infrastructureConfiguration) {
         this.infrastructureConfiguration = infrastructureConfiguration;

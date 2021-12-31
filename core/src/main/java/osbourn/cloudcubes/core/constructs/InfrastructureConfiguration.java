@@ -15,7 +15,7 @@ import java.util.*;
  *
  * <p>
  * This class serves to help construct those environment variables by containing the values that will be sent to the
- * Lambda functions. A InfrastructureData object will be constructed during `cdk synth` and it will be converted to
+ * Lambda functions. A InfrastructureConfiguration object will be constructed during `cdk synth` and it will be converted to
  * a HashMap of environment variables. The lambda functions will read the environment variables and turn it back into
  * an InfrastructureConfiguration object.
  * </p>
