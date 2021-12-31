@@ -2,7 +2,6 @@ package osbourn.cloudcubes.core.server;
 
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
-import osbourn.cloudcubes.core.constructs.InfrastructureData;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.*;
 
