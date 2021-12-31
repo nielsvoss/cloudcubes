@@ -1,5 +1,7 @@
 package osbourn.cloudcubes.infrastructure;
 
+import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
+import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.constructs.InfrastructureData;
 import software.constructs.Construct;
 import software.amazon.awscdk.Duration;
@@ -82,17 +84,17 @@ public class CloudCubesStack extends Stack {
         for (ISubnet subnet : serverVpc.getPublicSubnets()) {
             serverSubnetIds.add(subnet.getSubnetId());
         }
-        InfrastructureData infrastructureData = InfrastructureData.Builder.create()
-                .withRegion("US-EAST-2")
-                .withServerDatabaseName(serverTable.getTableName())
-                .withResourceBucketName(resourceBucket.getBucketName())
-                .withServerRoleId(serverRole.getRoleId())
-                .withServerInstanceProfileArn(serverInstanceProfile.getAttrArn())
-                .withServerSecurityGroupId(serverSecurityGroup.getSecurityGroupId())
-                .withServerVpcId(serverVpc.getVpcId())
-                .withServerSubnetIds(serverSubnetIds)
-                .build();
-        Map<String, String> infrastructureDataMap = infrastructureData.convertToMap();
+        InfrastructureConfiguration ic = new InfrastructureConfiguration();
+        ic.setValue(InfrastructureSetting.REGIONASSTRING, "US-EAST-2");
+        ic.setValue(InfrastructureSetting.SERVERDATABASENAME, serverTable.getTableName());
+        ic.setValue(InfrastructureSetting.RESOURCEBUCKETNAME, resourceBucket.getBucketName());
+        ic.setValue(InfrastructureSetting.SERVERROLEID, serverRole.getRoleId());
+        ic.setValue(InfrastructureSetting.SERVERINSTANCEPROFILEARN, serverInstanceProfile.getAttrArn());
+        ic.setValue(InfrastructureSetting.SERVERSECURITYGROUPID, serverSecurityGroup.getSecurityGroupId());
+        ic.setValue(InfrastructureSetting.SERVERVPCID, serverVpc.getVpcId());
+        ic.setServerSubnetIds(serverSubnetIds);
+
+        Map<String, String> infrastructureDataMap = ic.toEnvironmentVariableMap();
 
         // Create the server starter function
         Function serverStarter = Function.Builder.create(this, "ServerStarter")
