@@ -1,5 +1,7 @@
 package osbourn.cloudcubes.core.database;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import osbourn.cloudcubes.core.server.ServerOptions;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -13,7 +15,7 @@ import java.util.UUID;
  * This class primarily acts as an interface to the DynamoDB table, allowing you to read and set values in the database.
  * In most situations, the database values will be set using helper classes such as {@link ServerOptions}.
  */
-public class ServerTableEntry {
+public class ServerTableEntry implements DatabaseEntry {
     public final UUID id;
     private final DynamoDbClient dynamoDbClient;
     private final String tableName;
@@ -41,6 +43,10 @@ public class ServerTableEntry {
         return new ServerTableEntry(id, dynamoDbClient, tableName);
     }
 
+    public @NotNull UUID getId() {
+        return this.id;
+    }
+
     /**
      * <p>
      * Gets a value associated with a key from the database, assuming the value is a String.
@@ -59,7 +65,7 @@ public class ServerTableEntry {
      * @return The value in the database, or null if it does not exist.
      * @see #requestStringValueFromDatabase(String)
      */
-    public String getStringValue(String valueToGet) {
+    public @Nullable String getStringValue(@NotNull String valueToGet) {
         // Check if value has been cached
         if (stringValueCache.containsKey(valueToGet)) {
             return stringValueCache.get(valueToGet);
@@ -86,7 +92,7 @@ public class ServerTableEntry {
      * @return The value in the database, or null if it does not exist.
      * @see #getStringValue(String)
      */
-    public String requestStringValueFromDatabase(String valueToGet) {
+    public @Nullable String requestStringValueFromDatabase(@NotNull String valueToGet) {
         // Used to let AWS know that we want to get values from the item that has "Id" set to this.id
         Map<String, AttributeValue> keyToGet = new HashMap<>();
         keyToGet.put("Id", AttributeValue.builder()
@@ -107,7 +113,7 @@ public class ServerTableEntry {
         return value;
     }
 
-    public void setStringValue(String key, String value) {
+    public void setStringValue(@NotNull String key, @NotNull String value) {
         // Used to let AWS know that we want to set values for the item that has "Id" set to this.id
         Map<String, AttributeValue> itemKey = new HashMap<>();
         itemKey.put("Id", AttributeValue.builder()
