@@ -10,18 +10,15 @@ import java.util.UUID;
 
 public class CloudCubesServer implements Server {
     private final UUID id;
-    private final InfrastructureConfiguration infrastructureConfiguration;
     private final DynamoDBEntry dynamoDBEntry;
     private final ServerInstance serverInstance;
 
     private CloudCubesServer(
             UUID id,
-            InfrastructureConfiguration infrastructureConfiguration,
             DynamoDBEntry dynamoDBEntry,
             ServerInstance serverInstance
     ) {
         this.id = id;
-        this.infrastructureConfiguration = infrastructureConfiguration;
         this.dynamoDBEntry = dynamoDBEntry;
         this.serverInstance = serverInstance;
     }
@@ -77,6 +74,6 @@ public class CloudCubesServer implements Server {
                 infrastructureConfiguration.getServerSubnetIds().get(0),
                 infrastructureConfiguration.getValue(InfrastructureSetting.SERVERSECURITYGROUPID)
         );
-        return new CloudCubesServer(id, infrastructureConfiguration, dynamoDBEntry, serverInstance);
+        return new CloudCubesServer(id, dynamoDBEntry, serverInstance);
     }
 }
