@@ -26,7 +26,7 @@ public class InfrastructureData {
     private final String resourceBucketName;
     private final String serverRoleId;
     private final String serverInstanceProfileArn;
-    private final String serverSecurityGroupName;
+    private final String serverSecurityGroupId;
     private final String serverVpcId;
     private final List<String> serverSubnetIds;
 
@@ -36,7 +36,7 @@ public class InfrastructureData {
             String resourceBucketName,
             String serverRoleId,
             String serverInstanceProfileArn,
-            String serverSecurityGroupName,
+            String serverSecurityGroupId,
             String serverVpcId,
             List<String> serverSubnetIds
     ) {
@@ -45,7 +45,7 @@ public class InfrastructureData {
         this.resourceBucketName = resourceBucketName;
         this.serverRoleId = serverRoleId;
         this.serverInstanceProfileArn = serverInstanceProfileArn;
-        this.serverSecurityGroupName = serverSecurityGroupName;
+        this.serverSecurityGroupId = serverSecurityGroupId;
         this.serverVpcId = serverVpcId;
         this.serverSubnetIds = serverSubnetIds;
     }
@@ -61,20 +61,20 @@ public class InfrastructureData {
         String resourceBucketName = System.getenv("CLOUDCUBESRESOURCEBUCKETNAME");
         String serverRoleId = System.getenv("CLOUDCUBESSERVERROLEID");
         String serverInstanceProfileArn = System.getenv("CLOUDCUBESSERVERINSTANCEPROFILEARN");
-        String serverSecurityGroupName = System.getenv("CLOUDCUBESSERVERSECURITYGROUPNAME");
+        String serverSecurityGroupId = System.getenv("CLOUDCUBESSERVERSECURITYGROUPID");
         String serverVpcId = System.getenv("CLOUDCUBESSERVERVPCID");
         String serverSubnetIdsAsString = System.getenv("CLOUDCUBESSERVERSUBNETIDS");
         List<String> serverSubnetIds = Arrays.asList(serverSubnetIdsAsString.split(","));
         assert region != null;
         assert serverDataBaseName != null;
-        assert serverSecurityGroupName != null;
+        assert serverSecurityGroupId != null;
         return new InfrastructureData(
                 region,
                 serverDataBaseName,
                 resourceBucketName,
                 serverRoleId,
                 serverInstanceProfileArn,
-                serverSecurityGroupName,
+                serverSecurityGroupId,
                 serverVpcId,
                 serverSubnetIds
         );
@@ -100,8 +100,8 @@ public class InfrastructureData {
         return serverInstanceProfileArn;
     }
 
-    public String getServerSecurityGroupName() {
-        return serverSecurityGroupName;
+    public String getServerSecurityGroupId() {
+        return serverSecurityGroupId;
     }
 
     public String getServerVpcId() {
@@ -119,7 +119,7 @@ public class InfrastructureData {
         outputMap.put("CLOUDCUBESRESOURCEBUCKETNAME", resourceBucketName);
         outputMap.put("CLOUDCUBESSERVERROLEID", serverRoleId);
         outputMap.put("CLOUDCUBESSERVERINSTANCEPROFILEARN", serverInstanceProfileArn);
-        outputMap.put("CLOUDCUBESSERVERSECURITYGROUPNAME", serverSecurityGroupName);
+        outputMap.put("CLOUDCUBESSERVERSECURITYGROUPID", serverSecurityGroupId);
         outputMap.put("CLOUDCUBESSERVERVPCID", serverVpcId);
         String serverSubnetIdsAsString = String.join(",", serverSubnetIds);
         outputMap.put("CLOUDCUBESSERVERSUBNETIDS", serverSubnetIdsAsString);
@@ -137,7 +137,7 @@ public class InfrastructureData {
         private String resourceBucketName = null;
         private String serverRoleId = null;
         private String serverInstanceProfileArn = null;
-        private String serverSecurityGroupName = null;
+        private String serverSecurityGroupId = null;
         private String serverVpcId = null;
         private List<String> serverSubnetIds = null;
 
@@ -213,16 +213,16 @@ public class InfrastructureData {
             return this;
         }
 
-        public String getServerSecurityGroupName() {
-            return serverSecurityGroupName;
+        public String getServerSecurityGroupId() {
+            return serverSecurityGroupId;
         }
 
-        public void setServerSecurityGroupName(String serverSecurityGroupName) {
-            this.serverSecurityGroupName = serverSecurityGroupName;
+        public void setServerSecurityGroupId(String serverSecurityGroupId) {
+            this.serverSecurityGroupId = serverSecurityGroupId;
         }
 
-        public Builder withServerSecurityGroupName(String serverSecurityGroupName) {
-            setServerSecurityGroupName(serverSecurityGroupName);
+        public Builder withServerSecurityGroupId(String serverSecurityGroupId) {
+            setServerSecurityGroupId(serverSecurityGroupId);
             return this;
         }
 
@@ -263,7 +263,7 @@ public class InfrastructureData {
                     && resourceBucketName != null
                     && serverRoleId != null
                     && serverInstanceProfileArn != null
-                    && serverSecurityGroupName != null
+                    && serverSecurityGroupId != null
                     && serverVpcId != null
                     && serverSubnetIds != null;
         }
@@ -284,7 +284,7 @@ public class InfrastructureData {
                     resourceBucketName,
                     serverRoleId,
                     serverInstanceProfileArn,
-                    serverSecurityGroupName,
+                    serverSecurityGroupId,
                     serverVpcId,
                     serverSubnetIds
             );

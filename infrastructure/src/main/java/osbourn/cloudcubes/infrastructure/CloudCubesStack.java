@@ -88,8 +88,7 @@ public class CloudCubesStack extends Stack {
                 .withResourceBucketName(resourceBucket.getBucketName())
                 .withServerRoleId(serverRole.getRoleId())
                 .withServerInstanceProfileArn(serverInstanceProfile.getAttrArn())
-                // TODO Change code in core module to accept the id instead of the name
-                .withServerSecurityGroupName(serverSecurityGroup.getSecurityGroupId())
+                .withServerSecurityGroupId(serverSecurityGroup.getSecurityGroupId())
                 .withServerVpcId(serverVpc.getVpcId())
                 .withServerSubnetIds(serverSubnetIds)
                 .build();

@@ -60,7 +60,7 @@ public class CloudCubesServer implements Server {
                 infrastructureData,
                 infrastructureData.getServerInstanceProfileArn(),
                 infrastructureData.getServerSubnetIds().get(0),
-                infrastructureData.getServerSecurityGroupName()
+                infrastructureData.getServerSecurityGroupId()
         );
         return new CloudCubesServer(id, infrastructureData, serverTableEntry, serverInstance, serverOptions);
     }
