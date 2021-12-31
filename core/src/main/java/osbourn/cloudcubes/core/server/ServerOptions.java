@@ -1,16 +1,16 @@
 package osbourn.cloudcubes.core.server;
 
-import osbourn.cloudcubes.core.database.ServerTableEntry;
+import osbourn.cloudcubes.core.database.DynamoDBEntry;
 
 /**
  * Allows accessing common options in the server database such as the server's display name that are not related to
  * the server instance itself.
- * This class acts as a wrapper around {@link ServerTableEntry}.
+ * This class acts as a wrapper around {@link DynamoDBEntry}.
  */
 public class ServerOptions {
-    private final ServerTableEntry server;
+    private final DynamoDBEntry server;
 
-    public ServerOptions(ServerTableEntry server) {
+    public ServerOptions(DynamoDBEntry server) {
         this.server = server;
     }
 
@@ -19,7 +19,7 @@ public class ServerOptions {
      *
      * @return The server used to construct this object.
      */
-    public ServerTableEntry getServer() {
+    public DynamoDBEntry getServer() {
         return server;
     }
 

@@ -2,7 +2,7 @@ package osbourn.cloudcubes.core.server;
 
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
-import osbourn.cloudcubes.core.database.ServerTableEntry;
+import osbourn.cloudcubes.core.database.DynamoDBEntry;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.*;
 
@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents an EC2 instance that corresponds to a ServerTableEntry object.
+ * Represents an EC2 instance that corresponds to a DynamoDBEntry object.
  * Can be online or offline.
  */
 public class ServerInstance {
-    private final ServerTableEntry server;
+    private final DynamoDBEntry server;
     private final Ec2Client ec2Client;
     private final InfrastructureConfiguration infrastructureConfiguration;
     private final String serverInstanceProfileArn;
@@ -23,7 +23,7 @@ public class ServerInstance {
     private final String serverSecurityGroup;
     private String userData = null;
 
-    public ServerInstance(ServerTableEntry server,
+    public ServerInstance(DynamoDBEntry server,
                           Ec2Client ec2Client,
                           InfrastructureConfiguration infrastructureConfiguration,
                           String serverInstanceProfileArn,
@@ -38,11 +38,11 @@ public class ServerInstance {
     }
 
     /**
-     * Gets the ServerTableEntry object used to construct this class.
+     * Gets the DynamoDBEntry object used to construct this class.
      *
-     * @return The ServerTableEntry object used to construct this class.
+     * @return The DynamoDBEntry object used to construct this class.
      */
-    public ServerTableEntry getServer() {
+    public DynamoDBEntry getServer() {
         return server;
     }
 
