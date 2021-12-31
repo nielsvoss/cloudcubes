@@ -4,10 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awssdk.regions.Region;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <p>
@@ -98,6 +95,21 @@ public final class InfrastructureConfiguration {
         return environmentVariables;
     }
 
+    public Region getRegion() {
+        return Region.of(this.getValue(InfrastructureSetting.REGIONASSTRING)
+                .toLowerCase().replace('_', '-'));
+    }
+
+    public @NotNull List<String> getServerSubnetIds() {
+        return new ArrayList<>(Arrays.asList(
+                this.getValue(InfrastructureSetting.SERVERSUBNETIDSASSTRING).split(",")));
+    }
+
+    public void setServerSubnetIds(@NotNull List<String> serverSubnetIds) {
+        this.setValue(InfrastructureSetting.SERVERSUBNETIDSASSTRING,
+                String.join(",", serverSubnetIds));
+    }
+
     private void assertCompleteness(String errorMessage) {
         if (!this.hasCheckedCompleteness) {
             if (!this.isComplete()) {
@@ -118,15 +130,14 @@ public final class InfrastructureConfiguration {
     }
 
     public enum InfrastructureSetting {
-        REGION("CLOUDCUBESREGION"),
+        REGIONASSTRING("CLOUDCUBESREGION"),
         SERVERDATABASENAME("CLOUDCUBESSERVERDATABASENAME"),
         RESOURCEBUCKETNAME("CLOUDCUBESRESOURCEBUCKETNAME"),
         SERVERROLEID("CLOUDCUBESSERVERROLEID"),
         SERVERINSTANCEPROFILEARN("CLOUDCUBESSERVERINSTANCEPROFILEARN"),
         SERVERSECURITYGROUPID("CLOUDCUBESSERVERSECURITYGROUPID"),
         SERVERVPCID("CLOUDCUBESSERVERVPCID"),
-        // TODO: Allow List<String> instead of just String
-        SERVERSUBNETIDS("CLOUDCUBESSERVERSUBNETIDS");
+        SERVERSUBNETIDSASSTRING("CLOUDCUBESSERVERSUBNETIDS");
 
         private final @NotNull String environmentVariableName;
 
