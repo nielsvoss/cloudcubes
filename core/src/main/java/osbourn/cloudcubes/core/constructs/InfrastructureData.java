@@ -19,6 +19,8 @@ import java.util.List;
  * a HashMap of environment variables. The lambda functions will read the environment variables and turn it back into
  * and InfrastructureData object.
  * </p>
+ *
+ * @deprecated Use {@link InfrastructureConfiguration} instead
  */
 public class InfrastructureData {
     private final Region region;
