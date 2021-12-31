@@ -3,17 +3,12 @@ plugins {
     id 'application'
 }
 
-def CDK_VERSION = '1.115.0'
+def CDK_VERSION = '2.3.0'
 
 dependencies {
     implementation project(":core")
 
-    implementation "software.amazon.awscdk:core:${CDK_VERSION}"
-    implementation "software.amazon.awscdk:dynamodb:${CDK_VERSION}"
-    implementation "software.amazon.awscdk:lambda:${CDK_VERSION}"
-    implementation "software.amazon.awscdk:ec2:${CDK_VERSION}"
-    implementation "software.amazon.awscdk:s3:${CDK_VERSION}"
-    implementation "software.amazon.awscdk:s3-deployment:${CDK_VERSION}"
+    implementation "software.amazon.awscdk:aws-cdk-lib:${CDK_VERSION}"
 }
 
 application {
