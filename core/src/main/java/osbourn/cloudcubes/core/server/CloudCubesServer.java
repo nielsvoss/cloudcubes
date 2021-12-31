@@ -1,24 +1,25 @@
 package osbourn.cloudcubes.core.server;
 
+import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
+import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.constructs.InfrastructureConstructor;
-import osbourn.cloudcubes.core.constructs.InfrastructureData;
 
 public class CloudCubesServer implements Server {
     private final int id;
-    private final InfrastructureData infrastructureData;
+    private final InfrastructureConfiguration infrastructureConfiguration;
     private final ServerTableEntry serverTableEntry;
     private final ServerInstance serverInstance;
     private final ServerOptions serverOptions;
 
     private CloudCubesServer(
             int id,
-            InfrastructureData infrastructureData,
+            InfrastructureConfiguration infrastructureConfiguration,
             ServerTableEntry serverTableEntry,
             ServerInstance serverInstance,
             ServerOptions serverOptions
     ) {
         this.id = id;
-        this.infrastructureData = infrastructureData;
+        this.infrastructureConfiguration = infrastructureConfiguration;
         this.serverTableEntry = serverTableEntry;
         this.serverInstance = serverInstance;
         this.serverOptions = serverOptions;
@@ -49,19 +50,21 @@ public class CloudCubesServer implements Server {
         serverOptions.setDisplayName(displayName);
     }
 
-    public static CloudCubesServer fromId(int id, InfrastructureData infrastructureData) {
-        InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureData);
+    public static CloudCubesServer fromId(int id, InfrastructureConfiguration infrastructureConfiguration) {
+        InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureConfiguration);
         ServerTableEntry serverTableEntry = ServerTableEntry.fromId(
-                id, infrastructureConstructor.getDynamoDBClient(), infrastructureData.getServerDataBaseName());
+                id,
+                infrastructureConstructor.getDynamoDBClient(),
+                infrastructureConfiguration.getValue(InfrastructureSetting.SERVERDATABASENAME));
         ServerOptions serverOptions = new ServerOptions(serverTableEntry);
         ServerInstance serverInstance = new ServerInstance(
                 serverTableEntry,
                 infrastructureConstructor.getEc2Client(),
-                infrastructureData,
-                infrastructureData.getServerInstanceProfileArn(),
-                infrastructureData.getServerSubnetIds().get(0),
-                infrastructureData.getServerSecurityGroupId()
+                infrastructureConfiguration,
+                infrastructureConfiguration.getValue(InfrastructureSetting.SERVERINSTANCEPROFILEARN),
+                infrastructureConfiguration.getServerSubnetIds().get(0),
+                infrastructureConfiguration.getValue(InfrastructureSetting.SERVERSECURITYGROUPID)
         );
-        return new CloudCubesServer(id, infrastructureData, serverTableEntry, serverInstance, serverOptions);
+        return new CloudCubesServer(id, infrastructureConfiguration, serverTableEntry, serverInstance, serverOptions);
     }
 }
