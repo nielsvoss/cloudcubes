@@ -2,8 +2,10 @@ package osbourn.cloudcubes.core.constructs;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import software.amazon.awssdk.regions.Region;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -116,7 +118,16 @@ public final class InfrastructureConfiguration {
     }
 
     public enum InfrastructureSetting {
-        REGION("REGION");
+        REGION("CLOUDCUBESREGION"),
+        SERVERDATABASENAME("CLOUDCUBESSERVERDATABASENAME"),
+        RESOURCEBUCKETNAME("CLOUDCUBESRESOURCEBUCKETNAME"),
+        SERVERROLEID("CLOUDCUBESSERVERROLEID"),
+        SERVERINSTANCEPROFILEARN("CLOUDCUBESSERVERINSTANCEPROFILEARN"),
+        SERVERSECURITYGROUPID("CLOUDCUBESSERVERSECURITYGROUPID"),
+        SERVERVPCID("CLOUDCUBESSERVERVPCID"),
+        // TODO: Allow List<String> instead of just String
+        SERVERSUBNETIDS("CLOUDCUBESSERVERSUBNETIDS");
+
         private final @NotNull String environmentVariableName;
 
         InfrastructureSetting(@NotNull String environmentVariableName) {
