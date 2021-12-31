@@ -4,10 +4,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import osbourn.cloudcubes.core.util.Identifiable;
 
+import java.util.UUID;
+
 /**
  * Represents a single entry in a database
  */
 public interface DatabaseEntry extends Identifiable {
+    /**
+     * Gets the primary key of the database entry
+     *
+     * @return The primary key of the database entry
+     */
+    @NotNull UUID getId();
+
     /**
      * Gets a string value associated with key "key" from the database
      *

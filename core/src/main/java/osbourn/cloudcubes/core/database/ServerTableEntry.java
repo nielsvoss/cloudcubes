@@ -43,6 +43,7 @@ public class ServerTableEntry implements DatabaseEntry {
         return new ServerTableEntry(id, dynamoDbClient, tableName);
     }
 
+    @Override
     public @NotNull UUID getId() {
         return this.id;
     }
