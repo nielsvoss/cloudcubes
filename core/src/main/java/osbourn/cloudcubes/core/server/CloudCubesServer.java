@@ -5,15 +5,17 @@ import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.Infrastruc
 import osbourn.cloudcubes.core.constructs.InfrastructureConstructor;
 import osbourn.cloudcubes.core.database.ServerTableEntry;
 
+import java.util.UUID;
+
 public class CloudCubesServer implements Server {
-    private final String id;
+    private final UUID id;
     private final InfrastructureConfiguration infrastructureConfiguration;
     private final ServerTableEntry serverTableEntry;
     private final ServerInstance serverInstance;
     private final ServerOptions serverOptions;
 
     private CloudCubesServer(
-            String id,
+            UUID id,
             InfrastructureConfiguration infrastructureConfiguration,
             ServerTableEntry serverTableEntry,
             ServerInstance serverInstance,
@@ -27,7 +29,7 @@ public class CloudCubesServer implements Server {
     }
 
     @Override
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -51,7 +53,7 @@ public class CloudCubesServer implements Server {
         serverOptions.setDisplayName(displayName);
     }
 
-    public static CloudCubesServer fromId(String id, InfrastructureConfiguration infrastructureConfiguration) {
+    public static CloudCubesServer fromId(UUID id, InfrastructureConfiguration infrastructureConfiguration) {
         InfrastructureConstructor infrastructureConstructor = new InfrastructureConstructor(infrastructureConfiguration);
         ServerTableEntry serverTableEntry = ServerTableEntry.fromId(
                 id,

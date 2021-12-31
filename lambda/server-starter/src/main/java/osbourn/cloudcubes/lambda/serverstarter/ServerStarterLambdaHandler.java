@@ -8,6 +8,7 @@ import osbourn.cloudcubes.core.server.CloudCubesServer;
 import osbourn.cloudcubes.core.server.Server;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class ServerStarterLambdaHandler implements RequestHandler<Map<String, String>, String> {
     @Override
@@ -16,7 +17,9 @@ public class ServerStarterLambdaHandler implements RequestHandler<Map<String, St
         String response = "200 OK";
 
         InfrastructureConfiguration infrastructureConfiguration = InfrastructureConfiguration.fromEnvironment();
-        Server server = CloudCubesServer.fromId("1", infrastructureConfiguration);
+        // Sample UUID
+        UUID serverId = UUID.fromString("80000000-0000-0000-8000-000000000000");
+        Server server = CloudCubesServer.fromId(serverId, infrastructureConfiguration);
         server.startServer();
 
         return response;

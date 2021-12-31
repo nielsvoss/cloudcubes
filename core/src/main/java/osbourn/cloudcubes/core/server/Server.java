@@ -1,12 +1,14 @@
 package osbourn.cloudcubes.core.server;
 
+import java.util.UUID;
+
 public interface Server {
     /**
      * Gets the id of the server.
      *
      * @return The id of the server.
      */
-    String getId();
+    UUID getId();
 
     /**
      * Gets the state of the server:
