@@ -1,5 +1,7 @@
 package osbourn.cloudcubes.core.server;
 
+import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
+import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.constructs.InfrastructureData;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.ec2.model.*;
@@ -15,7 +17,7 @@ import java.util.Map;
 public class ServerInstance {
     private final ServerTableEntry server;
     private final Ec2Client ec2Client;
-    private final InfrastructureData infrastructureData;
+    private final InfrastructureConfiguration infrastructureConfiguration;
     private final String serverInstanceProfileArn;
     private final String subnetId;
     private final String serverSecurityGroup;
@@ -23,13 +25,13 @@ public class ServerInstance {
 
     public ServerInstance(ServerTableEntry server,
                           Ec2Client ec2Client,
-                          InfrastructureData infrastructureData,
+                          InfrastructureConfiguration infrastructureConfiguration,
                           String serverInstanceProfileArn,
                           String subnetId,
                           String serverSecurityGroup) {
         this.server = server;
         this.ec2Client = ec2Client;
-        this.infrastructureData = infrastructureData;
+        this.infrastructureConfiguration = infrastructureConfiguration;
         this.serverInstanceProfileArn = serverInstanceProfileArn;
         this.subnetId = subnetId;
         this.serverSecurityGroup = serverSecurityGroup;
@@ -54,12 +56,12 @@ public class ServerInstance {
     }
 
     /**
-     * Gets the InfrastructureData object used to construct this class.
+     * Gets the InfrastructureConfiguration object used to construct this class.
      *
-     * @return The InfrastructureData object used to construct this class.
+     * @return The InfrastructureConfiguration object used to construct this class.
      */
-    public InfrastructureData infrastructureData() {
-        return infrastructureData;
+    public InfrastructureConfiguration infrastructureConfiguration() {
+        return infrastructureConfiguration;
     }
 
     /**
@@ -182,7 +184,7 @@ public class ServerInstance {
             // (i.e. they need to be escaped)
             final String allowedCharactersPattern = "^[a-zA-Z0-9,._+:@%/-]+$";
 
-            String resourceBucketName = infrastructureData.getResourceBucketName();
+            String resourceBucketName = infrastructureConfiguration.getValue(InfrastructureSetting.RESOURCEBUCKETNAME);
             if (!resourceBucketName.matches(allowedCharactersPattern)) {
                 throw new IllegalStateException(
                         "The resource bucket name stored inside the provided infrastructure data contains invalid characters");
@@ -193,7 +195,7 @@ public class ServerInstance {
             builder.append("#!/bin/bash\n");
             builder.append("cd /home/ec2-user\n");
             // Set environment variables to the values in infrastructureData
-            for (Map.Entry<String, String> entry : infrastructureData.convertToMap().entrySet()) {
+            for (Map.Entry<String, String> entry : infrastructureConfiguration.toEnvironmentVariableMap().entrySet()) {
                 if (!entry.getKey().matches(allowedCharactersPattern) || !entry.getValue().matches(allowedCharactersPattern)) {
                     // TODO: Log warning
                     continue;
