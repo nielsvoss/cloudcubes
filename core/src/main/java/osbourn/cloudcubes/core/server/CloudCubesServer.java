@@ -13,20 +13,17 @@ public class CloudCubesServer implements Server {
     private final InfrastructureConfiguration infrastructureConfiguration;
     private final DynamoDBEntry dynamoDBEntry;
     private final ServerInstance serverInstance;
-    private final ServerOptions serverOptions;
 
     private CloudCubesServer(
             UUID id,
             InfrastructureConfiguration infrastructureConfiguration,
             DynamoDBEntry dynamoDBEntry,
-            ServerInstance serverInstance,
-            ServerOptions serverOptions
+            ServerInstance serverInstance
     ) {
         this.id = id;
         this.infrastructureConfiguration = infrastructureConfiguration;
         this.dynamoDBEntry = dynamoDBEntry;
         this.serverInstance = serverInstance;
-        this.serverOptions = serverOptions;
     }
 
     @Override
@@ -44,14 +41,26 @@ public class CloudCubesServer implements Server {
         serverInstance.startServer();
     }
 
+    /**
+     * Gets the display name of the server from the database
+     *
+     * @return The display name of the server
+     */
     @Override
     public String getDisplayName() {
-        return serverOptions.getDisplayName();
+        String displayName = this.dynamoDBEntry.getStringValue("DisplayName");
+        assert displayName != null;
+        return displayName;
     }
 
+    /**
+     * Sets the display name of the server. The database will be updated with the new value.
+     *
+     * @param displayName The new display name of the server.
+     */
     @Override
     public void setDisplayName(String displayName) {
-        serverOptions.setDisplayName(displayName);
+        this.dynamoDBEntry.setStringValue("DisplayName", displayName);
     }
 
     public static CloudCubesServer fromId(UUID id, InfrastructureConfiguration infrastructureConfiguration) {
@@ -60,7 +69,6 @@ public class CloudCubesServer implements Server {
                 id,
                 infrastructureConstructor.getDynamoDBClient(),
                 infrastructureConfiguration.getValue(InfrastructureSetting.SERVERDATABASENAME));
-        ServerOptions serverOptions = new ServerOptions(dynamoDBEntry);
         ServerInstance serverInstance = new ServerInstance(
                 dynamoDBEntry,
                 infrastructureConstructor.getEc2Client(),
@@ -69,6 +77,6 @@ public class CloudCubesServer implements Server {
                 infrastructureConfiguration.getServerSubnetIds().get(0),
                 infrastructureConfiguration.getValue(InfrastructureSetting.SERVERSECURITYGROUPID)
         );
-        return new CloudCubesServer(id, infrastructureConfiguration, dynamoDBEntry, serverInstance, serverOptions);
+        return new CloudCubesServer(id, infrastructureConfiguration, dynamoDBEntry, serverInstance);
     }
 }
