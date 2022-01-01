@@ -1,46 +1,24 @@
 package osbourn.cloudcubes.core.server;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Manages the launching and stopping of an AWS server, such as an EC2 instance or an EC2 spot instance
  */
 public interface InstanceManager {
     /**
-     * Starts the server
+     * Starts the server if state is ONLINE, and stops the server if state is OFFLINE
      *
-     * @throws InstanceAlreadyOnlineException If the server is already online
+     * @param state The state to set the server to
+     * @return true if the server was launched or stopped, false if it was already in the requested state
      */
-    void startServer();
+    boolean setState(@NotNull ServerState state);
 
     /**
-     * Stops the server
+     * Gets whether the server is online or offline. Note that this method may perform additional calculations if the
+     * server state is unknown at the time.
      *
-     * @throws InstanceAlreadyOfflineException If the server is already offline
+     * @return ONLINE if the server is online, OFFLINE if it is offline
      */
-    void stopServer();
-
-    /**
-     * Returns true if the server is online. Note that this method may perform additional calculations if the server
-     * state is unknown at the time.
-     *
-     * @return true if the server is online, false otherwise
-     */
-    boolean isServerOnline();
-
-    class InstanceStateException extends IllegalStateException {
-        public InstanceStateException(String message) {
-            super(message);
-        }
-    }
-
-    class InstanceAlreadyOnlineException extends IllegalStateException {
-        public InstanceAlreadyOnlineException() {
-            super("Instance was already online");
-        }
-    }
-
-    class InstanceAlreadyOfflineException extends IllegalStateException {
-        public InstanceAlreadyOfflineException() {
-            super("Instance was already offline");
-        }
-    }
+    ServerState getState();
 }
