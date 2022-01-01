@@ -12,16 +12,16 @@ import java.util.UUID;
 public class CloudCubesServer implements Server {
     private final UUID id;
     private final DatabaseEntry databaseEntry;
-    private final ServerInstance serverInstance;
+    private final EC2SpotInstanceManager EC2SpotInstanceManager;
 
     private CloudCubesServer(
             UUID id,
             DynamoDBEntry databaseEntry,
-            ServerInstance serverInstance
+            EC2SpotInstanceManager EC2SpotInstanceManager
     ) {
         this.id = id;
         this.databaseEntry = databaseEntry;
-        this.serverInstance = serverInstance;
+        this.EC2SpotInstanceManager = EC2SpotInstanceManager;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CloudCubesServer implements Server {
 
     @Override
     public void startServer() {
-        serverInstance.startServer();
+        EC2SpotInstanceManager.startServer();
     }
 
     /**
@@ -67,7 +67,7 @@ public class CloudCubesServer implements Server {
                 id,
                 infrastructureConstructor.getDynamoDBClient(),
                 infrastructureConfiguration.getValue(InfrastructureSetting.SERVERDATABASENAME));
-        ServerInstance serverInstance = new ServerInstance(
+        EC2SpotInstanceManager EC2SpotInstanceManager = new EC2SpotInstanceManager(
                 dynamoDBEntry,
                 infrastructureConstructor.getEc2Client(),
                 infrastructureConfiguration,
@@ -75,6 +75,6 @@ public class CloudCubesServer implements Server {
                 infrastructureConfiguration.getServerSubnetIds().get(0),
                 infrastructureConfiguration.getValue(InfrastructureSetting.SERVERSECURITYGROUPID)
         );
-        return new CloudCubesServer(id, dynamoDBEntry, serverInstance);
+        return new CloudCubesServer(id, dynamoDBEntry, EC2SpotInstanceManager);
     }
 }

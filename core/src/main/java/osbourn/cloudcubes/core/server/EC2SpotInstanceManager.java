@@ -14,7 +14,7 @@ import java.util.Map;
  * Represents an EC2 instance that corresponds to a DynamoDBEntry object.
  * Can be online or offline.
  */
-public class ServerInstance {
+public class EC2SpotInstanceManager {
     private final DynamoDBEntry server;
     private final Ec2Client ec2Client;
     private final InfrastructureConfiguration infrastructureConfiguration;
@@ -23,12 +23,12 @@ public class ServerInstance {
     private final String serverSecurityGroup;
     private String userData = null;
 
-    public ServerInstance(DynamoDBEntry server,
-                          Ec2Client ec2Client,
-                          InfrastructureConfiguration infrastructureConfiguration,
-                          String serverInstanceProfileArn,
-                          String subnetId,
-                          String serverSecurityGroup) {
+    public EC2SpotInstanceManager(DynamoDBEntry server,
+                                  Ec2Client ec2Client,
+                                  InfrastructureConfiguration infrastructureConfiguration,
+                                  String serverInstanceProfileArn,
+                                  String subnetId,
+                                  String serverSecurityGroup) {
         this.server = server;
         this.ec2Client = ec2Client;
         this.infrastructureConfiguration = infrastructureConfiguration;
