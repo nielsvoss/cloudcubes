@@ -4,22 +4,23 @@ import org.jetbrains.annotations.NotNull;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.constructs.InfrastructureConstructor;
+import osbourn.cloudcubes.core.database.DatabaseEntry;
 import osbourn.cloudcubes.core.database.DynamoDBEntry;
 
 import java.util.UUID;
 
 public class CloudCubesServer implements Server {
     private final UUID id;
-    private final DynamoDBEntry dynamoDBEntry;
+    private final DatabaseEntry databaseEntry;
     private final ServerInstance serverInstance;
 
     private CloudCubesServer(
             UUID id,
-            DynamoDBEntry dynamoDBEntry,
+            DynamoDBEntry databaseEntry,
             ServerInstance serverInstance
     ) {
         this.id = id;
-        this.dynamoDBEntry = dynamoDBEntry;
+        this.databaseEntry = databaseEntry;
         this.serverInstance = serverInstance;
     }
 
@@ -45,7 +46,7 @@ public class CloudCubesServer implements Server {
      */
     @Override
     public String getDisplayName() {
-        String displayName = this.dynamoDBEntry.getStringValue("DisplayName");
+        String displayName = this.databaseEntry.getStringValue("DisplayName");
         assert displayName != null;
         return displayName;
     }
@@ -57,7 +58,7 @@ public class CloudCubesServer implements Server {
      */
     @Override
     public void setDisplayName(String displayName) {
-        this.dynamoDBEntry.setStringValue("DisplayName", displayName);
+        this.databaseEntry.setStringValue("DisplayName", displayName);
     }
 
     public static CloudCubesServer fromId(UUID id, InfrastructureConfiguration infrastructureConfiguration) {
