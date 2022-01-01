@@ -1,5 +1,6 @@
 package osbourn.cloudcubes.core.server;
 
+import org.jetbrains.annotations.NotNull;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration;
 import osbourn.cloudcubes.core.constructs.InfrastructureConfiguration.InfrastructureSetting;
 import osbourn.cloudcubes.core.database.DynamoDBEntry;
@@ -14,7 +15,7 @@ import java.util.Map;
  * Represents an EC2 instance that corresponds to a DynamoDBEntry object.
  * Can be online or offline.
  */
-public class EC2SpotInstanceManager {
+public class EC2SpotInstanceManager implements InstanceManager {
     private final DynamoDBEntry server;
     private final Ec2Client ec2Client;
     private final InfrastructureConfiguration infrastructureConfiguration;
@@ -209,5 +210,21 @@ public class EC2SpotInstanceManager {
             userData = builder.toString();
         }
         return userData;
+    }
+
+    @Override
+    public boolean setState(@NotNull ServerState state) {
+        if (isServerOnline() && state == ServerState.OFFLINE) {
+            this.startServer();
+            return true;
+        } else if (!isServerOnline() && state == ServerState.OFFLINE) {
+            // TODO Stop Server
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public ServerState getState() {
+        return isServerOnline() ? ServerState.ONLINE : ServerState.OFFLINE;
     }
 }
