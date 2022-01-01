@@ -12,16 +12,16 @@ import java.util.UUID;
 public class CloudCubesServer implements Server {
     private final UUID id;
     private final DatabaseEntry databaseEntry;
-    private final EC2SpotInstanceManager EC2SpotInstanceManager;
+    private final InstanceManager instanceManager;
 
     private CloudCubesServer(
             UUID id,
             DynamoDBEntry databaseEntry,
-            EC2SpotInstanceManager EC2SpotInstanceManager
+            InstanceManager instanceManager
     ) {
         this.id = id;
         this.databaseEntry = databaseEntry;
-        this.EC2SpotInstanceManager = EC2SpotInstanceManager;
+        this.instanceManager = instanceManager;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CloudCubesServer implements Server {
 
     @Override
     public void startServer() {
-        EC2SpotInstanceManager.startServer();
+        instanceManager.setState(ServerState.ONLINE);
     }
 
     /**
