@@ -25,7 +25,7 @@ public interface Server extends Identifiable {
      *
      * @return The state of the server
      */
-    ServerState getServerState();
+    ProvisionalServerState getServerState();
 
     /**
      * Launches the server if it is offline. If the server is not in an OFFLINE state, an IllegalStateException may be

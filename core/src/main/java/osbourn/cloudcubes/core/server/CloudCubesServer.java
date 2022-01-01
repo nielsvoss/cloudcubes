@@ -30,7 +30,7 @@ public class CloudCubesServer implements Server {
     }
 
     @Override
-    public ServerState getServerState() {
+    public ProvisionalServerState getServerState() {
         return null;
     }
 

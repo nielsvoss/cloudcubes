@@ -83,31 +83,31 @@ public class EC2SpotInstanceManager {
     }
 
     /**
-     * The ServerState representing whether the server is online. The ServerState can be Unknown, so it is recommended
+     * The ProvisionalServerState representing whether the server is online. The ProvisionalServerState can be Unknown, so it is recommended
      * to use {@link #isServerOnline()} in most situations.
      *
-     * @return The ServerState representing whether the server is online.
+     * @return The ProvisionalServerState representing whether the server is online.
      * @see #isServerOnline()
      */
-    public ServerState getServerState() {
+    public ProvisionalServerState getServerState() {
         String serverStateAsString = server.getStringValue("ServerState");
         assert serverStateAsString != null;
         switch (serverStateAsString) {
             case "OFFLINE":
-                return ServerState.OFFLINE;
+                return ProvisionalServerState.OFFLINE;
             case "ONLINE":
-                return ServerState.ONLINE;
+                return ProvisionalServerState.ONLINE;
             case "UNKNOWN":
-                return ServerState.UNKNOWN;
+                return ProvisionalServerState.UNKNOWN;
             default:
                 // TODO Throw exception or log warning
-                return ServerState.UNKNOWN;
+                return ProvisionalServerState.UNKNOWN;
         }
     }
 
-    private void setServerState(ServerState serverState) {
+    private void setServerState(ProvisionalServerState provisionalServerState) {
         String serverStateAsString;
-        switch (serverState) {
+        switch (provisionalServerState) {
             case OFFLINE:
                 serverStateAsString = "OFFLINE";
                 break;
@@ -119,7 +119,7 @@ public class EC2SpotInstanceManager {
                 serverStateAsString = "UNKNOWN";
                 break;
         }
-        server.setStringValue("ServerState", serverStateAsString);
+        server.setStringValue("ProvisionalServerState", serverStateAsString);
     }
 
     public void startServer() {
@@ -132,7 +132,7 @@ public class EC2SpotInstanceManager {
         // Once the server starts, it will update the state in the database with a ONLINE state
         // If the server startup fails the database will contain an UNKNOWN state
         // and it will be checked the next time the state is read.
-        setServerState(ServerState.UNKNOWN);
+        setServerState(ProvisionalServerState.UNKNOWN);
 
         // Request EC2 Instance
         RequestSpotLaunchSpecification launchSpecification = RequestSpotLaunchSpecification.builder()
@@ -168,7 +168,7 @@ public class EC2SpotInstanceManager {
      */
     public boolean isServerOnline() {
         // TODO: Verify the server state if the server state is UNKNOWN
-        return getServerState() == ServerState.ONLINE;
+        return getServerState() == ProvisionalServerState.ONLINE;
     }
 
     /**

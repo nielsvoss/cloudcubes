@@ -1,6 +1,6 @@
 package osbourn.cloudcubes.core.server;
 
-public enum ServerState {
+public enum ProvisionalServerState {
     OFFLINE,
     ONLINE,
     UNKNOWN
