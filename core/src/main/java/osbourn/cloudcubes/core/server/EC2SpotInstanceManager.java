@@ -119,7 +119,7 @@ public class EC2SpotInstanceManager {
                 serverStateAsString = "UNKNOWN";
                 break;
         }
-        server.setStringValue("ProvisionalServerState", serverStateAsString);
+        server.setStringValue("ServerState", serverStateAsString);
     }
 
     public void startServer() {
